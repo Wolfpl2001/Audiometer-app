@@ -1,4 +1,5 @@
 const { app, BrowserWindow } = require('electron')
+const ffmpeg = require('fluent-ffmpeg');
 
 const createWindow = () => {
   const win = new BrowserWindow({
