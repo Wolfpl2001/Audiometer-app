@@ -1,46 +1,38 @@
 <!DOCTYPE html>
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<html>
+<html lang="en">
+<head>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta charset="UTF-8">
   <link rel="stylesheet" href="layout.css">
   <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-  <head>
-    <meta charset="UTF-8" />
-    <!-- https://developer.mozilla.org/en-US/docs/Web/HTTP/CSP -->
-    <meta
-      http-equiv="Content-Security-Policy"
-      content="default-src 'self'; script-src 'self'"
-    />
-    <meta
-      http-equiv="X-Content-Security-Policy"
-      content="default-src 'self'; script-src 'self'"
-    />
-    <title>AudioBijverking app</title>
-  </head>
-  <body>
-    <header>
-      <div class="logo">
-        <img src="logo.png" alt="Logo">
-      </div>
-    </header>
-    <main>
-      <div class="buttons">
-        <input type="file" id="audioFileInput" accept="audio/*">Kies audiobestand</button>
-        <button id="openFileBtn" >Kies audiodiagram</button>
-        <select name="" id="">
-          <option value="recht">recht</option>
-          <option value="links">links</option>
-          <option value="beide">beide</option>
-        </select>
-        <button id="downoload">Download</button>
-      </div>
-      <div class="labels">
+  <title>AudioBijverking App</title>
+</head>
+<body>
+  <header>
+    <div class="logo">
+      <img src="logo.png" alt="Logo">
+    </div>
+  </header>
+  <main>
+    <div class="buttons">
+      <input type="file" id="audioFileInput" accept=".mp3, .wav">
+      <button id="audioFile">Wybierz plik audio</button>
+      <button id="openFileBtn">Kies audiodiagram</button>
+      <select name="" id="">
+        <option value="recht">recht</option>
+        <option value="links">links</option>
+        <option value="beide">beide</option>
+      </select>
+      <button id="download">Download</button>
+    </div>
+    <div class="labels">
       <div class="audiodiagram">
         <canvas id="frequencyChart" width="800" height="200"></canvas>
       </div>
       <canvas id="waveformCanvas" width="800" height="200"></canvas>
-      </div>
-    </main>
-    <script src="renderer.js"></script>
-  </body>
+    </div>
+  </main>
+  <script src="renderer.js"></script>
+</body>
 </html>
