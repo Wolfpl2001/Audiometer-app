@@ -3,6 +3,7 @@ const { contextBridge, ipcRenderer } = require('electron');
 contextBridge.exposeInMainWorld(
   'electron',
   {
+    getAudioWaveform: (filePath) => ipcRenderer.invoke('get-audio-waveform', filePath),
     uploadAudioFile: () => ipcRenderer.invoke('dialog:uploadAudioFile'),
     send: (channel, ...args) => ipcRenderer.send(channel, ...args),
     on: (channel, callback) => ipcRenderer.on(channel, callback),

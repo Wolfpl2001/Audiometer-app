@@ -15,7 +15,7 @@
       http-equiv="X-Content-Security-Policy"
       content="default-src 'self'; script-src 'self'"
     />
-    <title>Hello from Electron renderer!</title>
+    <title>AudioBijverking app</title>
   </head>
   <body>
     <header>
@@ -25,21 +25,20 @@
     </header>
     <main>
       <div class="buttons">
-        <button id="audiobestand">Kies audiobestand</button>
+        <input type="file" id="audioFileInput" accept="audio/*">Kies audiobestand</button>
         <button id="openFileBtn" >Kies audiodiagram</button>
-        <select name="" id="" disabled>
+        <select name="" id="">
           <option value="recht">recht</option>
           <option value="links">links</option>
           <option value="beide">beide</option>
         </select>
-        <button id="downoload" disabled>Download</button>
+        <button id="downoload">Download</button>
       </div>
       <div class="labels">
       <div class="audiodiagram">
         <canvas id="frequencyChart" width="800" height="200"></canvas>
       </div>
-        <img src="logo.png" alt="Logo">
-        <img src="logo.png" alt="Logo">
+      <canvas id="waveformCanvas" width="800" height="200"></canvas>
       </div>
     </main>
     <script src="renderer.js"></script>

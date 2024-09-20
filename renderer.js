@@ -1,38 +1,72 @@
 $(document).ready(function() {
-  $("#audiodiagram").prop('disabled', true);
-  $("#richting").prop('disabled', true);
-  $("#downoload").prop('disabled', true);
+  $("#audioDiagram").prop('disabled', true);
+  $("#direction").prop('disabled', true);
+  $("#download").prop('disabled', true);
 
-  // Hier bedoelt wanneer een audiobestand wordt gekozen
-  $("#audiobestand").click(async function() {
+  // Here, when an audio file is selected
+  $("#audioFile").click(async function() {
     const result = await window.electron.uploadAudioFile();
     if (!result.canceled) {
-      console.log('Bestand geüpload:', result.filePaths);
-      $("#audiodiagram").prop('disabled', false);
+      console.log('File uploaded:', result.filePaths);
+      $("#audioDiagram").prop('disabled', false);
     }
   });
 
-  // Hier wordt de audio diagram geklikt
-  $("#audiodiagram").click(function() {
-    console.log('Audiodiagram gekozen');
-    $("#richting").prop('disabled', false);
+  // Here the audio diagram button is clicked
+  $("#audioDiagram").click(function() {
+    console.log('Audio diagram selected');
+    $("#direction").prop('disabled', false);
   });
 
-  $("#richting").click(function() {
-    console.log('Richting gekozen');
-    $("#downoload").prop('disabled', false);
+  $("#direction").click(function() {
+    console.log('Direction selected');
+    $("#download").prop('disabled', false);
   });
 
-  $("#downoload").click(function() {
-    console.log('Download gestart');
+  $("#download").click(function() {
+    console.log('Download started');
   });
 });
 
+// Adding functionality to draw the audio waveform on canvas
+document.addEventListener('DOMContentLoaded', () => {
+  const fileInput = document.getElementById('audioFileInput');  // Ensure you have an input element with id 'audioFileInput'
+  const canvas = document.getElementById('waveformCanvas');  // Ensure you have a canvas element with id 'waveformCanvas'
+  const canvasCtx = canvas.getContext('2d');
+
+  fileInput.addEventListener('change', async () => {
+    if (fileInput.files.length === 0) {
+      return; // No file, exit
+    }
+
+    const file = fileInput.files[0];
+    const filePath = file.path;
+
+    try {
+      // Generate waveform and get image path
+      const { imagePath } = await window.electron.getAudioWaveform(filePath);
+
+      // Clear the canvas
+      canvasCtx.clearRect(0, 0, canvas.width, canvas.height);
+
+      // Load and draw the new waveform image
+      const waveformImage = new Image();
+      waveformImage.src = imagePath;
+      waveformImage.onload = () => {
+        canvasCtx.drawImage(waveformImage, 0, 0, canvas.width, canvas.height);
+      };
+    } catch (error) {
+      console.error('Error generating audio waveform:', error);
+    }
+  });
+});
+
+// Example handling of XML file selection
 document.getElementById('openFileBtn').addEventListener('click', () => {
-  window.electron.send('open-file-dialog'); // Użyj window.electron.send
+  window.electron.send('open-file-dialog'); // Use window.electron.send
 });
 
-window.electron.on('file-data', (event, data) => {  // Użyj window.electron.on
+window.electron.on('file-data', (event, data) => {
   console.log('Selected file:', data.filePath);
   console.log('File content:', data.content);
 
@@ -43,22 +77,14 @@ window.electron.on('file-data', (event, data) => {  // Użyj window.electron.on
       const extractedData = extractFrequencyData(result);
       console.log('Extracted frequency data:', extractedData);
 
-      // Log the data before passing it to drawChart
-      console.log('Data to be drawn on the chart:', extractedData);
-
       drawChart(extractedData);
       document.getElementById('processAudioBtn').disabled = false;
     }
   });
 });
 
-document.getElementById('processAudioBtn').addEventListener('click', () => {
-  window.electron.send('process-audio');  // Użyj window.electron.send
-});
 
-window.electron.on('audio-processed', (event, message) => {  // Użyj window.electron.on
-  alert(message);
-});
+
 function parseXML(xmlString, callback) {
   try {
     const parser = new DOMParser();
@@ -85,26 +111,18 @@ function extractFrequencyData(parsedXml) {
   const half = Math.floor(lines.length / 2);
 
   lines.forEach((line, index) => {
-    console.log('Processing line:', line);
-
     if (/^[\d\s.-]+$/.test(line)) {
       const matches = line.match(/(\d+)\s(\d+)\s(\d+(\.\d+)?)\s(\d+)\s(\d+)/);
       if (matches) {
         const value = parseFloat(matches[3]);
         const frequency = parseInt(matches[5]);
 
-        console.log('Found value:', value, 'and frequency:', frequency);
-
         if (index < (half - 1)) {
           leftEar.push([value, frequency]);
         } else {
           rightEar.push([value, frequency]);
         }
-      } else {
-        console.log('No matches for line:', line);
       }
-    } else {
-      console.log('Line ignored:', line);
     }
   });
 
@@ -121,8 +139,6 @@ function extractFrequencyData(parsedXml) {
 }
 
 function drawChart(frequencies) {
-  console.log('Drawing chart with frequencies:', frequencies);
-
   const ctx = document.getElementById('frequencyChart').getContext('2d');
   if (!ctx) {
     console.error('Failed to get canvas context');
