@@ -33,15 +33,12 @@ document.getElementById('openFileBtn').addEventListener('click', () => {
 });
 
 window.electron.on('file-data', (event, data) => {
-  console.log('Selected file:', data.filePath);
-  console.log('File content:', data.content);
 
   parseXML(data.content, (err, result) => {
     if (err) {
       console.error('Error parsing XML:', err);
     } else {
       const extractedData = extractFrequencyData(result);
-      console.log('Extracted frequency data:', extractedData);
 
       drawChart(extractedData);
       document.getElementById('processAudioBtn').disabled = false;
@@ -83,15 +80,12 @@ function extractFrequencyData(parsedXml) {
   const half = Math.floor(lines.length / 2);
 
   lines.forEach((line, index) => {
-    console.log('Processing line:', line);
 
     if (/^[\d\s.-]+$/.test(line)) {
       const matches = line.match(/(\d+)\s(\d+)\s(\d+(\.\d+)?)\s(\d+)\s(\d+)/);
       if (matches) {
         const value = parseFloat(matches[3]);
         const frequency = parseInt(matches[5]);
-
-        console.log('Found value:', value, 'and frequency:', frequency);
 
         if (index < (half - 1)) {
           leftEar.push([value, frequency]);
@@ -119,7 +113,7 @@ function extractFrequencyData(parsedXml) {
 }
 
 function drawChart(frequencies) {
-  console.log('Drawing chart with frequencies:', frequencies);
+
 
   const ctx = document.getElementById('frequencyChart').getContext('2d');
   if (!ctx) {
