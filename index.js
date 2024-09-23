@@ -1,13 +1,15 @@
 const { app, BrowserWindow, dialog, ipcMain } = require('electron');
 const path = require('path');
 const fs = require('fs');  // Import fs module
+const ffmpeg = require('fluent-ffmpeg');  // Import fluent-ffmpeg
+const ffmpegStatic = require('ffmpeg-static');  // Import ffmpeg-static to get ffmpeg path
 
 const createWindow = () => {
   const win = new BrowserWindow({
     width: 1800,
     height: 900,
     webPreferences: {
-      preload: path.join(__dirname, 'preload.js'),
+      preload: path.join(__dirname, 'preload.js'),  // Upewnij się, że ścieżka do pliku preload.js jest poprawna
       contextIsolation: true,
       enableRemoteModule: false,
       nodeIntegration: false,
@@ -16,7 +18,6 @@ const createWindow = () => {
 
   win.loadFile('index.html');
 };
-
 app.whenReady().then(() => {
   createWindow();
 
@@ -41,6 +42,37 @@ ipcMain.handle('dialog:uploadAudioFile', async () => {
   return { canceled: false, filePath, fileContent };
 });
 
+// Handle FFmpeg path request from Renderer process
+ipcMain.handle('getFfmpegPath', async () => {
+  // Return the FFmpeg executable path
+  return ffmpegStatic;
+});
+
+// Handle waveform generation request
+ipcMain.handle('generateWaveform', async (event, filePath) => {
+  const waveformImagePath = path.join(app.getPath('temp'), 'waveform.png');  // Ścieżka do pliku tymczasowego
+
+  return new Promise((resolve, reject) => {
+    ffmpeg(filePath)
+      .setFfmpegPath(ffmpegStatic)
+      .outputOptions([
+        '-y',
+          '-filter_complex', 'showwavespic=s=640x240:split_channels=1:colors=black',
+          '-frames:v', '1'
+      ])
+      .on('end', () => {
+        console.log('Waveform generated successfully');
+        resolve(waveformImagePath);
+      })
+      .on('error', (err) => {
+        console.error('FFmpeg error:', err);
+        reject(err);
+      })
+      .save(waveformImagePath);
+  });
+});
+
+// Handle file dialog for XML files
 ipcMain.on('open-file-dialog', async (event) => {
   const result = await dialog.showOpenDialog({
     properties: ['openFile'],
@@ -55,6 +87,7 @@ ipcMain.on('open-file-dialog', async (event) => {
   event.reply('file-data', { filePath, content: fileContent });
 });
 
+// Quit the app when all windows are closed, except on macOS
 app.on('window-all-closed', () => {
   if (process.platform !== 'darwin') {
     app.quit();

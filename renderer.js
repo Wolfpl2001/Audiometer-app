@@ -7,10 +7,19 @@ $(document).ready(function() {
   $("#audiobestand").click(async function() {
     const result = await window.electron.uploadAudioFile();
     if (!result.canceled) {
-      console.log('Bestand geüpload:', result.filePath);
-      $("#audiodiagram").prop('disabled', false);
+      const filePath = result.filePath;
+  
+      // Generowanie wykresu fali dźwiękowej
+      const waveformPath = await window.electron.generateWaveform(filePath);
+      console.log('Waveform saved to:', waveformPath);
+  
+      // Wyświetlenie obrazu w HTML
+      const waveformImage = document.getElementById('waveformImage');
+      waveformImage.src = `file://${waveformPath}`;
+      waveformImage.style.display = 'block';  // Upewnij się, że obraz jest widoczny
     }
   });
+  
 
   // Trigger when an audio diagram is selected
   $("#audiodiagram").click(function() {
@@ -28,32 +37,35 @@ $(document).ready(function() {
   });
 });
 
+// Handle file dialog
 document.getElementById('openFileBtn').addEventListener('click', () => {
   window.electron.send('open-file-dialog');
 });
 
+// Handle parsed file data
 window.electron.on('file-data', (event, data) => {
-
   parseXML(data.content, (err, result) => {
     if (err) {
       console.error('Error parsing XML:', err);
     } else {
       const extractedData = extractFrequencyData(result);
-
       drawChart(extractedData);
       document.getElementById('processAudioBtn').disabled = false;
     }
   });
 });
 
+// Handle audio processing
 document.getElementById('processAudioBtn').addEventListener('click', () => {
   window.electron.send('process-audio');
 });
 
+// Handle processed audio feedback
 window.electron.on('audio-processed', (event, message) => {
   alert(message);
 });
 
+// XML parsing function
 function parseXML(xmlString, callback) {
   try {
     const parser = new DOMParser();
@@ -64,6 +76,7 @@ function parseXML(xmlString, callback) {
   }
 }
 
+// Extract frequency data from XML
 function extractFrequencyData(parsedXml) {
   const parametersNode = parsedXml.getElementsByTagName('Parameters')[0];
   if (!parametersNode) {
@@ -76,11 +89,9 @@ function extractFrequencyData(parsedXml) {
 
   const leftEar = [];
   const rightEar = [];
-
   const half = Math.floor(lines.length / 2);
 
   lines.forEach((line, index) => {
-
     if (/^[\d\s.-]+$/.test(line)) {
       const matches = line.match(/(\d+)\s(\d+)\s(\d+(\.\d+)?)\s(\d+)\s(\d+)/);
       if (matches) {
@@ -112,9 +123,8 @@ function extractFrequencyData(parsedXml) {
   return { leftEar: sortedLeftEar, rightEar: sortedRightEar };
 }
 
+// Draw chart function
 function drawChart(frequencies) {
-
-
   const ctx = document.getElementById('frequencyChart').getContext('2d');
   if (!ctx) {
     console.error('Failed to get canvas context');
