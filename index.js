@@ -3,6 +3,8 @@ const path = require('path');
 const fs = require('fs');  // Import fs module
 const ffmpeg = require('fluent-ffmpeg');  // Import fluent-ffmpeg
 const ffmpegStatic = require('ffmpeg-static');  // Import ffmpeg-static to get ffmpeg path
+const dataStore = require('./datastore'); 
+
 
 const createWindow = () => {
   const win = new BrowserWindow({
@@ -27,7 +29,9 @@ app.whenReady().then(() => {
     }
   });
 });
-
+ipcMain.handle('saveTempData', (event, { waveformPath, equalizerData }) => {
+  dataStore.saveTempData({ waveformPath, equalizerData });  // Używamy dataStore
+});
 // Handle audio file upload through dialog
 ipcMain.handle('dialog:uploadAudioFile', async () => {
   const result = await dialog.showOpenDialog({
@@ -50,8 +54,8 @@ ipcMain.handle('getFfmpegPath', async () => {
 
 // Handle waveform generation request
 ipcMain.handle('generateWaveform', async (event, filePath) => {
-  const waveformImagePath = path.join(app.getPath('temp'), 'waveform.png');  // Ścieżka do pliku tymczasowego
-
+  const waveformImagePath = path.join(app.getPath('temp'), 'waveform.png');  
+  dataStore.saveWaveformPath(filePath);
   return new Promise((resolve, reject) => {
     ffmpeg(filePath)
       .setFfmpegPath(ffmpegStatic)

@@ -135,6 +135,8 @@ function drawChart(frequencies) {
   const leftEarData = frequencies.leftEar.map(f => f[0]);
   const rightEarLabels = frequencies.rightEar.map(f => f[1]);
   const rightEarData = frequencies.rightEar.map(f => f[0]);
+  dataStore.saveEqualizerData(frequencies);
+
 
   new Chart(ctx, {
     type: 'line',
