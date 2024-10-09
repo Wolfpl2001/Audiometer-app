@@ -18,7 +18,7 @@ const createWindow = () => {
     }
   });
 
-  win.loadFile('index.html');
+  win.loadFile('frontend/index.html');
 
   // Add error handling for preload script
   win.webContents.on('did-fail-load', (event, errorCode, errorDescription) => {
@@ -102,10 +102,3 @@ ipcMain.on('open-file-dialog', async (event) => {
 
   event.reply('file-data', { filePath, content: fileContent });
 });
-
-// // Quit the app when all windows are closed, except on macOS
-// app.on('window-all-closed', () => {
-//   if (process.platform !== 'darwin') {
-//     app.quit();
-//   }
-// });
