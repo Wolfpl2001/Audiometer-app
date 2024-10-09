@@ -3,7 +3,7 @@ const path = require('path');
 const fs = require('fs');  // Import fs module
 const ffmpeg = require('fluent-ffmpeg');  // Import fluent-ffmpeg
 const ffmpegStatic = require('ffmpeg-static');  // Import ffmpeg-static to get ffmpeg path
-const dataStore = require('./datastore'); 
+const datastore = require('./datastore');
 
 const createWindow = () => {
   const win = new BrowserWindow({
@@ -36,8 +36,11 @@ app.whenReady().then(() => {
   });
 });
 
+datastore.test(app);
+datastore.getEqualizerData("filepathTODO");
+
 ipcMain.handle('saveTempData', (event, { waveformPath, equalizerData }) => {
-  dataStore.saveTempData({ waveformPath, equalizerData });  // Używamy dataStore
+  datastore.saveTempData({ waveformPath, equalizerData });  // Używamy dataStore
 });
 // Handle audio file upload through dialog
 ipcMain.handle('dialog:uploadAudioFile', async () => {
@@ -59,10 +62,12 @@ ipcMain.handle('getFfmpegPath', async () => {
   return ffmpegStatic;
 });
 
+
+
 // Handle waveform generation request
 ipcMain.handle('generateWaveform', async (event, filePath) => {
   const waveformImagePath = path.join(app.getPath('temp'), 'waveform.png');  
-  dataStore.saveWaveformPath(filePath);
+  datastore.saveWaveformPath(filePath);
   return new Promise((resolve, reject) => {
     ffmpeg(filePath)
       .setFfmpegPath(ffmpegStatic)
@@ -98,9 +103,9 @@ ipcMain.on('open-file-dialog', async (event) => {
   event.reply('file-data', { filePath, content: fileContent });
 });
 
-// Quit the app when all windows are closed, except on macOS
-app.on('window-all-closed', () => {
-  if (process.platform !== 'darwin') {
-    app.quit();
-  }
-});
+// // Quit the app when all windows are closed, except on macOS
+// app.on('window-all-closed', () => {
+//   if (process.platform !== 'darwin') {
+//     app.quit();
+//   }
+// });

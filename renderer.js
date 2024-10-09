@@ -23,8 +23,11 @@ $(document).ready(function() {
   
 
   // Trigger when an audio diagram is selected
-  $("#audiodiagram").click(function() {
+  $("#openFileBtn").click(async function() {
     console.log('Audiodiagram gekozen');
+    const testCallFunction = await window.electron.getEqualizerData("BLABLALBLAL File path");
+    console.log(testCallFunction);
+
     $("#richting").prop('disabled', false);
   });
 
@@ -126,7 +129,7 @@ function extractFrequencyData(parsedXml) {
 
 // Draw chart function
 function drawChart(frequencies) {
-window.dataStore.saveEqualizerData(frequencies);
+  window.dataStore.saveEqualizerData(frequencies);
   const ctx = document.getElementById('frequencyChart').getContext('2d');
   if (!ctx) {
     console.error('Failed to get canvas context');
@@ -138,8 +141,6 @@ window.dataStore.saveEqualizerData(frequencies);
   const rightEarLabels = frequencies.rightEar.map(f => f[1]);
   const rightEarData = frequencies.rightEar.map(f => f[0]);
   
-
-
   new Chart(ctx, {
     type: 'line',
     data: {
