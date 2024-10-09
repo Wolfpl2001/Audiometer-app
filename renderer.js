@@ -1,8 +1,9 @@
+
 $(document).ready(function() {
   $("#audiodiagram").prop('disabled', true);
   $("#richting").prop('disabled', true);
   $("#downoload").prop('disabled', true);
-
+  
   // Trigger when an audio file is selected
   $("#audiobestand").click(async function() {
     const result = await window.electron.uploadAudioFile();
@@ -119,12 +120,13 @@ function extractFrequencyData(parsedXml) {
 
   const sortedLeftEar = sortAndRemoveDuplicates(leftEar);
   const sortedRightEar = sortAndRemoveDuplicates(rightEar);
-
+  
   return { leftEar: sortedLeftEar, rightEar: sortedRightEar };
 }
 
 // Draw chart function
 function drawChart(frequencies) {
+window.dataStore.saveEqualizerData(frequencies);
   const ctx = document.getElementById('frequencyChart').getContext('2d');
   if (!ctx) {
     console.error('Failed to get canvas context');
@@ -135,7 +137,7 @@ function drawChart(frequencies) {
   const leftEarData = frequencies.leftEar.map(f => f[0]);
   const rightEarLabels = frequencies.rightEar.map(f => f[1]);
   const rightEarData = frequencies.rightEar.map(f => f[0]);
-  dataStore.saveEqualizerData(frequencies);
+  
 
 
   new Chart(ctx, {

@@ -5,21 +5,27 @@ const ffmpeg = require('fluent-ffmpeg');  // Import fluent-ffmpeg
 const ffmpegStatic = require('ffmpeg-static');  // Import ffmpeg-static to get ffmpeg path
 const dataStore = require('./datastore'); 
 
-
 const createWindow = () => {
   const win = new BrowserWindow({
     width: 1800,
     height: 900,
     webPreferences: {
-      preload: path.join(__dirname, 'preload.js'),  // Upewnij się, że ścieżka do pliku preload.js jest poprawna
+      preload: path.join(__dirname, 'preload.js'),  
       contextIsolation: true,
       enableRemoteModule: false,
       nodeIntegration: false,
+      sandbox: true, // Ensure sandbox mode is enabled
     }
   });
 
   win.loadFile('index.html');
+
+  // Add error handling for preload script
+  win.webContents.on('did-fail-load', (event, errorCode, errorDescription) => {
+    console.error('Failed to load preload script:', errorDescription);
+  });
 };
+
 app.whenReady().then(() => {
   createWindow();
 
@@ -29,6 +35,7 @@ app.whenReady().then(() => {
     }
   });
 });
+
 ipcMain.handle('saveTempData', (event, { waveformPath, equalizerData }) => {
   dataStore.saveTempData({ waveformPath, equalizerData });  // Używamy dataStore
 });

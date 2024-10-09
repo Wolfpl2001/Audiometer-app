@@ -1,4 +1,5 @@
 const { contextBridge, ipcRenderer } = require('electron');
+const store = require('./datastore');
 
 contextBridge.exposeInMainWorld(
   'electron',
@@ -9,6 +10,10 @@ contextBridge.exposeInMainWorld(
     send: (channel, ...args) => ipcRenderer.send(channel, ...args),
     on: (channel, callback) => ipcRenderer.on(channel, callback),
     once: (channel, callback) => ipcRenderer.once(channel, callback),
-    removeAllListeners: (channel) => ipcRenderer.removeAllListeners(channel)
-  }
+    removeAllListeners: (channel) => ipcRenderer.removeAllListeners(channel),
+    saveWaveformPath: store.saveWaveformPath,
+    getWaveformPath: store.getWaveformPath,
+    saveEqualizerData: store.saveEqualizerData,
+    getEqualizerData: store.getEqualizerData
+}
 );
