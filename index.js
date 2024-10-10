@@ -3,7 +3,7 @@ const path = require('path');
 const fs = require('fs');  // Import fs module
 const ffmpeg = require('fluent-ffmpeg');  // Import fluent-ffmpeg
 const ffmpegStatic = require('ffmpeg-static');  // Import ffmpeg-static to get ffmpeg path
-const dataStore = require('./datastore'); 
+const datastore = require('./datastore.js'); 
 
 const createWindow = () => {
   const win = new BrowserWindow({
@@ -18,7 +18,7 @@ const createWindow = () => {
     }
   });
 
-  win.loadFile('index.html');
+  win.loadFile('frontend/index.html');
 
   // Add error handling for preload script
   win.webContents.on('did-fail-load', (event, errorCode, errorDescription) => {
@@ -35,6 +35,9 @@ app.whenReady().then(() => {
     }
   });
 });
+let equalizerData = 0;
+datastore.saveEqualizerData(equalizerData);
+
 
 ipcMain.handle('saveTempData', (event, { waveformPath, equalizerData }) => {
   dataStore.saveTempData({ waveformPath, equalizerData });  // Używamy dataStore

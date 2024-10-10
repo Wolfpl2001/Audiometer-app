@@ -126,7 +126,11 @@ function extractFrequencyData(parsedXml) {
 
 // Draw chart function
 function drawChart(frequencies) {
-window.dataStore.saveEqualizerData(frequencies);
+  window.electron.saveEqualizerData(frequencies).then(response => {
+    console.log('Equalizer data saved successfully:', response);
+  }).catch(error => {
+    console.error('Failed to save equalizer data:', error);
+  });
   const ctx = document.getElementById('frequencyChart').getContext('2d');
   if (!ctx) {
     console.error('Failed to get canvas context');
