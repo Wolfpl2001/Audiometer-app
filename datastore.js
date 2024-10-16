@@ -6,22 +6,28 @@ let tempEqualizerData = null;
 
 
 function saveWaveformPath(waveformPath) {
-  tempWaveformPath = waveformPath;
-  console.log("waveform saved to storage:", tempWaveformPath);
+ ipcMain.handle('saveWaveformPath', async (event, {waveformPath}) => {
+  try{
+    tempwaveformPath = waveformPath;
+    console.log('Saving Waveform Path:', waveformPath);
+    return { success: true, waveformPath: tempWaveformPath };
+  }catch (error) {
+    console.error('Error saving waveform path:', error);
+    return { success: false, error: error.message };
+  }
+});
 }
 
 function getWaveformPath() {
   return tempWaveformPath;
 }
-
 function saveEqualizerData(equalizerData) {
-  let tempEqualizerData = null;
-  // Handle FFmpeg path request from Renderer process
-  ipcMain.handle('saveEqualizerData', async ({equalizerData}) => {
+  tempEqualizerData = [];
+  ipcMain.handle('saveEqualizerData', async (event, {equalizerData}) => {
     try {
       tempEqualizerData = equalizerData;
       console.log('Saving Equalizer Data:', equalizerData);;
-      return { success: true };
+      return { success: true, equalizerData: tempEqualizerData };
   } catch (error) {
       console.error('Error saving equalizer data:', error);
       return { success: false, error: error.message };
@@ -30,20 +36,9 @@ function saveEqualizerData(equalizerData) {
 }
 
 // Funkcja do pobierania equalizerData
-function getEqualizerData(equalizerData) {
+function getEqualizerData() {
   ipcMain.handle('getEqualizerData', (event) => {
-    return equalizerDataStore;  // Zwraca zapisane dane
-  });
-}
-
-function test(app) {
-  console.log("TEST function called");
-  // Quit the app when all windows are closed, except on macOS
-  app.on('window-all-closed', () => {
-    if (process.platform !== 'darwin') {
-      console.log('QUIT');
-      app.quit();
-    }
+    return equalizerDataStore; 
   });
 }
 

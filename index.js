@@ -35,13 +35,12 @@ app.whenReady().then(() => {
     }
   });
 });
-let equalizerData = 0;
-datastore.saveEqualizerData(equalizerData);
+datastore.saveEqualizerData();
+datastore.getEqualizerData();
+datastore.saveWaveformPath();
+datastore.getWaveformPath();
 
 
-ipcMain.handle('saveTempData', (event, { waveformPath, equalizerData }) => {
-  dataStore.saveTempData({ waveformPath, equalizerData });  // Używamy dataStore
-});
 // Handle audio file upload through dialog
 ipcMain.handle('dialog:uploadAudioFile', async () => {
   const result = await dialog.showOpenDialog({
@@ -65,7 +64,6 @@ ipcMain.handle('getFfmpegPath', async () => {
 // Handle waveform generation request
 ipcMain.handle('generateWaveform', async (event, filePath) => {
   const waveformImagePath = path.join(app.getPath('temp'), 'waveform.png');  
-  dataStore.saveWaveformPath(filePath);
   return new Promise((resolve, reject) => {
     ffmpeg(filePath)
       .setFfmpegPath(ffmpegStatic)

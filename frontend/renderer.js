@@ -9,10 +9,15 @@ $(document).ready(function() {
     const result = await window.electron.uploadAudioFile();
     if (!result.canceled) {
       const filePath = result.filePath;
-  
+      window.electron.saveWaveformPath(filePath)
+      .then(response => {
+        console.log('waveform path saved to:', response);
+      })
+      .catch(error => {
+        console.error('Failed to save waveform path:', error);
+      });
       // Generowanie wykresu fali dźwiękowej
-      const waveformPath = await window.electron.generateWaveform(filePath);
-      console.log('Waveform saved to:', waveformPath);
+      console.log('Waveform saved to:', filePath);
   
       // Wyświetlenie obrazu w HTML
       const waveformImage = document.getElementById('waveformImage');
@@ -126,9 +131,11 @@ function extractFrequencyData(parsedXml) {
 
 // Draw chart function
 function drawChart(frequencies) {
-  window.electron.saveEqualizerData(frequencies).then(response => {
+  window.electron.saveEqualizerData(frequencies)
+  .then(response => {
     console.log('Equalizer data saved successfully:', response);
-  }).catch(error => {
+  })
+  .catch(error => {
     console.error('Failed to save equalizer data:', error);
   });
   const ctx = document.getElementById('frequencyChart').getContext('2d');

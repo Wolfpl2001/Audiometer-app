@@ -11,10 +11,8 @@ contextBridge.exposeInMainWorld(
     once: (channel, callback) => ipcRenderer.once(channel, callback),
     removeAllListeners: (channel) => ipcRenderer.removeAllListeners(channel),
     getEqualizerData: () => ipcRenderer.invoke('getEqualizerData', equalizerData),
+    getWaveformPath: () => ipcRenderer.invoke('getWaveformPath', waveformPath),
     saveEqualizerData: (equalizerData) => ipcRenderer.invoke('saveEqualizerData', equalizerData),
-    // saveWaveformPath: store.saveWaveformPath,
-    // getWaveformPath: store.getWaveformPath,
-    // saveEqualizerData: store.saveEqualizerData,
-    // getEqualizerData: store.getEqualizerData
+    saveWaveformPath: (path) => ipcRenderer.invoke('saveWaveformPath', path),
 }
 );
