@@ -4,30 +4,39 @@ $(document).ready(function() {
   $("#richting").prop('disabled', true);
   $("#downoload").prop('disabled', true);
   
-  // Trigger when an audio file is selected
+  // Handle audio file upload through dialog in Renderer process and save the waveform path
   $("#audiobestand").click(async function() {
+    console.log('Audio file button clicked');  
     const result = await window.electron.uploadAudioFile();
+    console.log('Audio file upload result:', result);  
     if (!result.canceled) {
       const filePath = result.filePath;
-      window.electron.saveWaveformPath(filePath)
-      .then(response => {
-        console.log('waveform path saved to:', response);
-      })
-      .catch(error => {
-        console.error('Failed to save waveform path:', error);
-      });
-      // Generowanie wykresu fali dźwiękowej
-      console.log('Waveform saved to:', filePath);
+      console.log('Selected file path:', filePath);
+      
+      // call the saveWaveformPath function
+      window.electron.saveWaveformPath({ waveformPath: filePath })
+        .then(async (response) => {
+          console.log('Waveform path saved:', response.waveformPath);
   
-      // Wyświetlenie obrazu w HTML
-      const waveformImage = document.getElementById('waveformImage');
-      waveformImage.src = `file://${waveformPath}`;
-      waveformImage.style.display = 'block';  // Upewnij się, że obraz jest widoczny
+          // generate waveform image
+          const waveformImagePath = await window.electron.generateWaveform(response.waveformPath);
+          console.log('Waveform image generated at:', waveformImagePath); 
+  
+          // display waveform image
+          const waveformImage = document.getElementById('waveformImage');
+          waveformImage.src = `file://${waveformImagePath}`;
+          waveformImage.style.display = 'block'; 
+        })
+        .catch(error => {
+          console.error('Failed to save waveform path:', error);
+        });
+    } else {
+      console.log('File selection was canceled');
     }
   });
   
+  
 
-  // Trigger when an audio diagram is selected
   $("#audiodiagram").click(function() {
     console.log('Audiodiagram gekozen');
     $("#richting").prop('disabled', false);

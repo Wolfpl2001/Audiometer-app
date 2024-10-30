@@ -3,8 +3,9 @@ const path = require('path');
 const fs = require('fs');  // Import fs module
 const ffmpeg = require('fluent-ffmpeg');  // Import fluent-ffmpeg
 const ffmpegStatic = require('ffmpeg-static');  // Import ffmpeg-static to get ffmpeg path
-const datastore = require('./datastore.js'); 
+const datastore = require('./datastore.js'); // Import datastore module
 
+// Create the main window
 const createWindow = () => {
   const win = new BrowserWindow({
     width: 1800,
@@ -14,7 +15,7 @@ const createWindow = () => {
       contextIsolation: true,
       enableRemoteModule: false,
       nodeIntegration: false,
-      sandbox: true, // Ensure sandbox mode is enabled
+      sandbox: true,
     }
   });
 
@@ -26,8 +27,15 @@ const createWindow = () => {
   });
 };
 
+// Create the main window when the app is ready
 app.whenReady().then(() => {
   createWindow();
+
+  // Inicjalizacja funkcji w datastore
+  datastore.saveWaveformPath();
+  datastore.getWaveformPath();
+  datastore.saveEqualizerData();
+  datastore.getEqualizerData();
 
   app.on('activate', () => {
     if (BrowserWindow.getAllWindows().length === 0) {
@@ -35,10 +43,6 @@ app.whenReady().then(() => {
     }
   });
 });
-datastore.saveEqualizerData();
-datastore.getEqualizerData();
-datastore.saveWaveformPath();
-datastore.getWaveformPath();
 
 
 // Handle audio file upload through dialog
@@ -69,8 +73,8 @@ ipcMain.handle('generateWaveform', async (event, filePath) => {
       .setFfmpegPath(ffmpegStatic)
       .outputOptions([
         '-y',
-          '-filter_complex', 'showwavespic=s=640x240:split_channels=1:colors=black',
-          '-frames:v', '1'
+        '-filter_complex', 'showwavespic=s=640x240:split_channels=1:colors=black',
+        '-frames:v', '1'
       ])
       .on('end', () => {
         console.log('Waveform generated successfully');
@@ -83,6 +87,7 @@ ipcMain.handle('generateWaveform', async (event, filePath) => {
       .save(waveformImagePath);
   });
 });
+
 
 // Handle file dialog for XML files
 ipcMain.on('open-file-dialog', async (event) => {
