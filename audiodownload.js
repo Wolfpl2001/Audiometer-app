@@ -3,7 +3,7 @@ const path = require("path");
 const ffmpeg = require("fluent-ffmpeg");
 const ffmpegStatic = require("ffmpeg-static");
 const fs = require("fs");
-const { getWaveformPath } = "./storeData.js"; // Importowanie funkcji do zapisu ścieżki
+const getWaveformPath = require("./datastore.js");
 
 
 ipcMain.handle('file:processAndSave', async (event) => {

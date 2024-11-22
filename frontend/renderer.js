@@ -2,7 +2,7 @@
 $(document).ready(function() {
   $("#audiodiagram").prop('disabled', true);
   $("#richting").prop('disabled', true);
-  $("#downoload").prop('disabled', true);
+  // $("#downoload").prop('disabled', true);
   
   // Handle audio file upload through dialog in Renderer process and save the waveform path
   $("#audiobestand").click(async function() {

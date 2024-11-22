@@ -32,6 +32,7 @@ const createWindow = () => {
 app.whenReady().then(() => {
   createWindow();
 
+
   // Inicjalizacja funkcji w datastore
   datastore.saveWaveformPath();
   datastore.getWaveformPath();
