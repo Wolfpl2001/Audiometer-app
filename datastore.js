@@ -18,9 +18,9 @@ function saveWaveformPath() {
 }
 
 function getWaveformPath() {
-  ipcMain.handle('getWaveformPath', async (event) => {
+  //ipcMain.handle('getWaveformPath', (event) => {
     return tempWaveformPath;
-  });
+  //});
 }
 
 function saveEqualizerData() {
