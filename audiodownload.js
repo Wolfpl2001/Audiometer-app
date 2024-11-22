@@ -1,27 +1,34 @@
-import {app, dialog, ipcMain} from "electron";
-import path from "path";
-import ffmpeg from "fluent-ffmpeg";
-import ffmpegStatic from "ffmpeg-static";
-import fs from "fs";
+const { app, ipcMain } = require("electron");
+const path = require("path");
+const ffmpeg = require("fluent-ffmpeg");
+const ffmpegStatic = require("ffmpeg-static");
+const fs = require("fs");
+const { getWaveformPath } = "./storeData.js"; // Importowanie funkcji do zapisu ścieżki
 
-let tempOutputPath = null;
 
-function saveOutputPath() {
-    ipcMain.handle('saveOutputFilePath', async (event, { outputPath }) => {
-        try {
-            saveOutputPath = outputPath;
-            console.log('Saving Test:', tempOutputPath);
-            return { success: true, outputPath: tempOutputPath };
-        } catch (error) {
-            console.error('Error saving TEst spath:', error);
-            return { success: false, error: error.message };
-        }
-    });
-}
-ipcMain.handle('file:save', async (event, filePath) => {
-    const outputFilePath = path.join(app.getPath('temp'), 'output.wav');
+ipcMain.handle('file:processAndSave', async (event) => {
+    try {
+        const outputDir = app.getPath('temp'); // Katalog tymczasowy
+        const outputFilePath = path.join(outputDir, "test.mp3"); // Ścieżka docelowego pliku
+
+        // Przetwarzanie audio
+        await processAudio({ getWaveformPath }, outputFilePath);
+
+        // Zapis ścieżki do storeData.js
+        saveWaveformPath({ waveformPath: outputFilePath });
+
+        console.log('File processed and path saved:', outputFilePath);
+        return { success: true, outputFilePath };
+    } catch (error) {
+        console.error('Error processing file:', error);
+        return { success: false, error: error.message };
+    }
+});
+
+// Funkcja obsługująca przetwarzanie audio z FFmpeg
+function processAudio(inputPath, outputPath) {
     return new Promise((resolve, reject) => {
-        ffmpeg(filePath)
+        ffmpeg({ getWaveformPath })
             .setFfmpegPath(ffmpegStatic)
             .audioFilters([
                 'volume=-12dB',
@@ -53,18 +60,13 @@ ipcMain.handle('file:save', async (event, filePath) => {
                 'volume=-6dB'
             ])
             .on('end', () => {
-                console.log('Processing finished!');
-                resolve(outputFilePath);
+                console.log('Audio processing completed:', outputPath);
+                resolve(outputPath);
             })
             .on('error', (err) => {
-                console.error('Error during processing:', err);
+                console.error('Error during audio processing:', err);
                 reject(err);
             })
-            .save(outputFilePath);
+            .save(outputPath);
     });
-})
-
-//return the functions
-module.exports = {
-    saveOutputPath,
-};
+}

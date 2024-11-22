@@ -3,12 +3,12 @@ const { ipcMain } = require('electron');
 let tempWaveformPath = null;
 let tempEqualizerData = null;
 
-// saveWaveformPath() and getWaveformPath() functions are used to save and retrieve the waveform path
+// Register the handlers
 function saveWaveformPath() {
   ipcMain.handle('saveWaveformPath', async (event, { waveformPath }) => {
     try {
       tempWaveformPath = waveformPath;
-      console.log('Saving Waveform Path:', tempWaveformPath); 
+      console.log('Saving Waveform Path:', tempWaveformPath);
       return { success: true, waveformPath: tempWaveformPath };
     } catch (error) {
       console.error('Error saving waveform path:', error);
@@ -24,7 +24,6 @@ function getWaveformPath() {
   });
 }
 
-// saveEqualizerData() and getEqualizerData() functions are used to save and retrieve the equalizer data
 function saveEqualizerData() {
   ipcMain.handle('saveEqualizerData', async (event, { equalizerData }) => {
     try {
@@ -40,12 +39,11 @@ function saveEqualizerData() {
 
 function getEqualizerData() {
   ipcMain.handle('getEqualizerData', async () => {
-    console.log('Returning Equalizer Data:', tempEqualizerData); 
+    console.log('Returning Equalizer Data:', tempEqualizerData);
     return tempEqualizerData;
   });
 }
 
-//return the functions
 module.exports = {
   saveWaveformPath,
   getWaveformPath,

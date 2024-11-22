@@ -4,6 +4,7 @@ const fs = require('fs');  // Import fs module
 const ffmpeg = require('fluent-ffmpeg');  // Import fluent-ffmpeg
 const ffmpegStatic = require('ffmpeg-static');  // Import ffmpeg-static to get ffmpeg path
 const datastore = require('./datastore.js'); // Import datastore module
+const audiodownload = require('./audiodownload.js'); // Import audiodownload module
 
 // Create the main window
 const createWindow = () => {
@@ -36,6 +37,7 @@ app.whenReady().then(() => {
   datastore.getWaveformPath();
   datastore.saveEqualizerData();
   datastore.getEqualizerData();
+  audiodownload.processAudio();
 
   app.on('activate', () => {
     if (BrowserWindow.getAllWindows().length === 0) {

@@ -42,13 +42,14 @@ $(document).ready(function() {
     $("#richting").prop('disabled', false);
   });
 
-  $("#richting").click(function() {
-    console.log('Richting gekozen');
-    $("#downoload").prop('disabled', false);
-  });
+  // $("#richting").click(function() {
+  //   console.log('Richting gekozen');
+  //   $("#downoload").prop('disabled', false);
+  // });
 
   $("#downoload").click(function() {
     console.log('Download gestart');
+    window.electron.processAudio();
   });
 });
 
@@ -68,16 +69,6 @@ window.electron.on('file-data', (event, data) => {
       document.getElementById('processAudioBtn').disabled = false;
     }
   });
-});
-
-// Handle audio processing
-document.getElementById('processAudioBtn').addEventListener('click', () => {
-  window.electron.send('process-audio');
-});
-
-// Handle processed audio feedback
-window.electron.on('audio-processed', (event, message) => {
-  alert(message);
 });
 
 // XML parsing function
@@ -188,4 +179,28 @@ function drawChart(frequencies) {
       }
     }
   });
+  async function downloadProcessedFile() {
+    try {
+        const { success, outputFilePath, error } = await ipcRenderer.invoke('file:processAndSave', );
+        if (success) {
+            console.log('File processed and saved:', outputFilePath);
+
+            // Automatyczne pobieranie
+            const fileData = fs.readFileSync(outputFilePath);
+            const blob = new Blob([fileData], { type: 'audio/wav' });
+
+            const downloadLink = document.createElement('a');
+            downloadLink.href = URL.createObjectURL(blob);
+            downloadLink.download = 'processed_audio.wav';
+            downloadLink.click();
+        } else {
+            console.error('Error processing file:', error);
+        }
+    } catch (err) {
+        console.error('Error downloading file:', err);
+    }
+}
+
+// Wywołanie automatyczne
+document.getElementById('processButton').addEventListener('click', downloadProcessedFile);
 }

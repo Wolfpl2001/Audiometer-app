@@ -1,5 +1,5 @@
 {
-  "name": "Soudwork",
+  "name": "Soundwork",
   "version": "1.0.0",
   "description": "Soudwork is a desktop application that allows you to edit audio files.",
   "main": "index.js",
@@ -25,7 +25,7 @@
   },
   "build": {
     "appId": "com.example.audioapp",
-    "productName": "Soudwork",
+    "productName": "Soundwork",
     "files": [
       "dist/**/*",
       "node_modules/**/*",
