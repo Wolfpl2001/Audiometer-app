@@ -62,11 +62,11 @@ main {
     background-color: #00D4FF;
 }
 
-/* Grafiek styling */
+/* Audiodiagram styling */
 .audiodiagram {
     position: relative;
     margin-left: 0%;
-   margin-top: 20px;
+    margin-top: -20px;
     margin-right: 60px;
     width: 600px;
     height: 300px;
@@ -83,4 +83,10 @@ main {
 }
 .labels img{
     padding-top: 30px;
+}
+.labels strong{
+    font-size: 20px;
+    margin-top: 20px;
+    font-weight: bold;
+    text-align: center;
 }
