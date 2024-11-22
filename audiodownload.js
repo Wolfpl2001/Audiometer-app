@@ -71,6 +71,10 @@ function processAudio(inputPath, outputPath) {
                 console.log('Audio processing completed:', outputPath);
                 resolve(outputPath);
             })
+            .on('progress', (progress) => {
+                // Todo show progress in Frontend 
+                console.log('Progress: ', progress);
+            })
             .on('error', (err) => {
                 console.error('Error during audio processing:', err);
                 reject(err);

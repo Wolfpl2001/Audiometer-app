@@ -38,7 +38,7 @@ app.whenReady().then(() => {
   datastore.getWaveformPath();
   datastore.saveEqualizerData();
   datastore.getEqualizerData();
-  audiodownload.processAudio();
+ // audiodownload.processAudio();
 
   app.on('activate', () => {
     if (BrowserWindow.getAllWindows().length === 0) {
