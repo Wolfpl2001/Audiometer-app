@@ -28,7 +28,11 @@ ipcMain.handle('file:processAndSave', async (event) => {
 // Funkcja obsługująca przetwarzanie audio z FFmpeg
 function processAudio(inputPath, outputPath) {
     return new Promise((resolve, reject) => {
-        ffmpeg({ getWaveformPath })
+        console.log('Input file', getWaveformPath);
+        console.info('Path where the file will be stored:', ffmpegStatic);
+        console.log('Output:', outputPath);
+        // TODO this should be the file name with path from the upload!!!!  <------------------------------------------------
+        ffmpeg('test.mp3')
             .setFfmpegPath(ffmpegStatic)
             .audioFilters([
                 'volume=-12dB',

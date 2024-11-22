@@ -5,17 +5,14 @@
   "main": "index.js",
   "author": "Gilde Opleidingen | Groep 1",
   "license": "ISC",
-
   "scripts": {
     "start": "electron .",
     "build": "electron-builder"
   },
-
   "devDependencies": {
     "electron": "^32.0.2",
     "electron-builder": "^25.1.8"
   },
-
   "dependencies": {
     "@ffmpeg-installer/ffmpeg": "^1.1.0",
     "chart.js": "^4.4.4",
@@ -35,7 +32,6 @@
       "frontend/**/*",
       "datastore.js",
       "preload.js"
-
     ],
     "directories": {
       "output": "release"
