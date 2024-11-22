@@ -3,7 +3,7 @@ const path = require("path");
 const ffmpeg = require("fluent-ffmpeg");
 const ffmpegStatic = require("ffmpeg-static");
 const fs = require("fs");
-const getWaveformPath = require("./datastore.js");
+const datastore = require("./datastore.js");
 
 
 ipcMain.handle('file:processAndSave', async (event) => {
@@ -12,9 +12,11 @@ ipcMain.handle('file:processAndSave', async (event) => {
         const outputFilePath = path.join(outputDir, "test.mp3"); // Ścieżka docelowego pliku
 
         // Przetwarzanie audio
-        await processAudio({ getWaveformPath }, outputFilePath);
+        let returnFFmpeg = await processAudio({ datastore }, outputFilePath);
+        console.log('datastore.js -- processAndSave ipcMain handler return  -- processAudio return:', returnFFmpeg);
 
         // Zapis ścieżki do storeData.js
+        // TODO look into if this also needs to be await function!!!
         saveWaveformPath({ waveformPath: outputFilePath });
 
         console.log('File processed and path saved:', outputFilePath);
@@ -27,8 +29,10 @@ ipcMain.handle('file:processAndSave', async (event) => {
 
 // Funkcja obsługująca przetwarzanie audio z FFmpeg
 function processAudio(inputPath, outputPath) {
-    return new Promise((resolve, reject) => {
-        console.log('Input file', getWaveformPath);
+    return new Promise(async (resolve, reject) => {
+        console.log('datastore:',datastore);        
+        let inputFilename = datastore.getWaveformPath();
+        console.log('InputFilename: ', inputFilename);
         console.info('Path where the file will be stored:', ffmpegStatic);
         console.log('Output:', outputPath);
         // TODO this should be the file name with path from the upload!!!!  <------------------------------------------------
