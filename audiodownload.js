@@ -15,10 +15,6 @@ ipcMain.handle('file:processAndSave', async (event) => {
         let returnFFmpeg = await processAudio({ datastore }, outputFilePath);
         console.log('datastore.js -- processAndSave ipcMain handler return  -- processAudio return:', returnFFmpeg);
 
-        // Zapis ścieżki do storeData.js
-        // No idea is this needed (and not working?) 
-        //datastore.saveWaveformPath({ waveformPath: outputFilePath });
-
         console.log('File processed and path saved:', outputFilePath);
         return { success: true, outputFilePath };
     } catch (error) {
@@ -38,6 +34,7 @@ function processAudio(inputPath, outputPath) {
         // Run ffmpeg command with audiofilters
         ffmpeg(inputFilename)
             .setFfmpegPath(ffmpegStatic)
+            // TODO get the data from the audiogram
             .audioFilters([
                 'volume=-12dB',
                 'channelsplit=channel_layout=stereo[left][right]',
@@ -72,7 +69,7 @@ function processAudio(inputPath, outputPath) {
                 resolve(outputPath);
             })
             .on('progress', (progress) => {
-                // Todo show progress in Frontend 
+                // TODO show progress in Frontend 
                 console.log('Progress: ', progress);
             })
             .on('error', (err) => {
