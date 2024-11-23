@@ -10,7 +10,7 @@ export class TaskTranscodeAudio
   inputFile;
   uuidV4 = uuid.v4();
   outputPath;
-  outputFile:
+  outputFile;
   
   constructor()
   {
@@ -42,7 +42,7 @@ export class TaskTranscodeAudio
         !this.inputPath || !this.inputPath > 0 ||
         !this.outputFile || !this.outputFile > 0 || 
         !this.outputPath || !this.outputPath > 0)
-        return new Error("Missing output or input);
+        return new Error("Missing output or input");
     return true;
   }
 
