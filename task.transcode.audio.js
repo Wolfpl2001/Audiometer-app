@@ -1,47 +1,29 @@
-import * as ffmpeg from 'fluent-ffmpeg';
-import * as Q from 'q';
-import * as uuid from 'uuid';
-import * as path from 'path';
-import * as fs from 'fs';
+const ffmpeg =require('fluent-ffmpeg');
+const Q = require('q');
+const uuid = require('uuid');
 
-export class TaskTranscodeAudio 
+class TaskTranscodeAudio 
 {
-  inputPath;
   inputFile;
   uuidV4 = uuid.v4();
-  outputPath;
   outputFile;
+  audioFilter;
   
   constructor()
   {
   }
 
-  // Set input
-  setInput(inputPath, inputFile)
-  {
-    this.inputPath = inputPath;
-    this.inputFile = inputFile;
-  }
-
-  // Set output
-  setOutput(outputPath, outputFile)
-  {
-    this.outputFile = outputFile;
-    this.outputPath = outputPath;
-  }
-
   checkSupportedAudioFile()
   {
-    // TODO check if it's realy a 
+    // TODO check if it's realy an audio file?
+    // use ffprobe? or look into mime-type
   }
 
   // Check valid input and output file
   checkValidInputOutput()
   {
     if( !this.inputFile || !this.inputFile.length > 0 || 
-        !this.inputPath || !this.inputPath > 0 ||
-        !this.outputFile || !this.outputFile > 0 || 
-        !this.outputPath || !this.outputPath > 0)
+        !this.outputFile || !this.outputFile > 0 )
         return new Error("Missing output or input");
     return true;
   }
@@ -49,16 +31,27 @@ export class TaskTranscodeAudio
   transcodeAudioFile()
   {
     const deferred = Q.defer();
-    checkValidInputOutput(); 
-    const transcoder = ffmpet(this.inputPath + this.inputFile);
+    // Check requirements to start transcoding
+    if(this.checkValidInputOutput() == Error) return deferred.error("Missing file input or output"); 
+    
+    // Create an ffmpeg transocder
+    const transcoder = ffmpeg(this.inputFile);
+
+    // Set an audiofilter
+    if (this.audioFilter) {
+      transcoder.audioFilter(this.audioFilter);
+    }
+    // TODO other stuff like:
+    // transcoder.audioQuality
+    // transcoder.audioCodec
+    // transcoder.audioFrequency
     
     // Transcoder events
     transcoder.on('start', (commandLine) => {
       console.info('task.transcode.audio.js -- transcodeAudioFile -- start command:', commandLine);
     });
-    
     transcoder.on('stderr', (stderrLine) => {
-        console.error('task.transcode.audio.js  -- transcodeAudioFile -- stderr: ', stderrLine);
+        console.info('task.transcode.audio.js  -- transcodeAudioFile -- stderr: ', stderrLine);
     })
     transcoder.on('error', (err) => {
         log.error('task.transcode.audio.js -- transcodeAudioFile --' +
@@ -68,9 +61,10 @@ export class TaskTranscodeAudio
     transcoder.on('end', () => {
         return deferred.resolve();
     });
-
-    transcoder.save(this.outputPath + this.outputFile);
+    transcoder.save(this.outputFile);
 
     return deferred.promise;
   }
 }
+
+module.exports.TaskTranscodeAudio =  TaskTranscodeAudio;
