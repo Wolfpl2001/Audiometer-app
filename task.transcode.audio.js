@@ -2,10 +2,14 @@ const ffmpeg =require('fluent-ffmpeg');
 const Q = require('q');
 const uuid = require('uuid');
 
+/**
+ * TaskTranscodeAudio
+ * @description Using ffmpeg to transcode audio
+ */
 class TaskTranscodeAudio 
 {
-  inputFile;
-  uuidV4 = uuid.v4();
+  inputFile;              // input file with path
+  uuidV4 = uuid.v4();     // unique uuid
   outputFile;
   audioFilter;
   
@@ -59,7 +63,8 @@ class TaskTranscodeAudio
         return deferred.reject(err);
     });
     transcoder.on('end', () => {
-        return deferred.resolve();
+        // TODO
+        return deferred.resolve(this.outputFile);
     });
     transcoder.save(this.outputFile);
 
