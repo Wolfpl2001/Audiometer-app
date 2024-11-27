@@ -50,3 +50,4 @@ module.exports = {
   saveEqualizerData,
   getEqualizerData,
 };
+
