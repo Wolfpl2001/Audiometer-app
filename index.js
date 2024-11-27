@@ -32,12 +32,13 @@ const createWindow = () => {
 app.whenReady().then(() => {
   createWindow();
 
+
   // Inicjalizacja funkcji w datastore
   datastore.saveWaveformPath();
   datastore.getWaveformPath();
   datastore.saveEqualizerData();
   datastore.getEqualizerData();
-  audiodownload.processAudio();
+ // audiodownload.processAudio();
 
   app.on('activate', () => {
     if (BrowserWindow.getAllWindows().length === 0) {
