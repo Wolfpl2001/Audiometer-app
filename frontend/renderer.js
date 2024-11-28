@@ -125,6 +125,8 @@ function extractFrequencyData(parsedXml) {
 
   const sortedLeftEar = sortAndRemoveDuplicates(leftEar);
   const sortedRightEar = sortAndRemoveDuplicates(rightEar);
+  console.log('Left ear frequencies:', sortedLeftEar);
+  console.log('Right ear frequencies:', sortedRightEar);
   
   return { leftEar: sortedLeftEar, rightEar: sortedRightEar };
 }

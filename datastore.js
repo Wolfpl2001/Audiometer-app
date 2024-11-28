@@ -37,10 +37,10 @@ function saveEqualizerData() {
 }
 
 function getEqualizerData() {
-  ipcMain.handle('getEqualizerData', async (event) => {
+  // ipcMain.handle('getEqualizerData', async (event) => {
     console.log('Returning Equalizer Data:', tempEqualizerData);
     return tempEqualizerData;
-  });
+  // });
 }
 
 module.exports = {
