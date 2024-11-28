@@ -11,6 +11,7 @@ const createWindow = () => {
   const win = new BrowserWindow({
     width: 1800,
     height: 900,
+    title: 'SoundWork',
     webPreferences: {
       preload: path.join(__dirname, 'preload.js'),
       contextIsolation: true,
@@ -20,7 +21,7 @@ const createWindow = () => {
     }
   });
 
-  win.loadFile('frontend/index.html');
+  win.loadFile('frontend/login.html');
 
   // Add error handling for preload script
   win.webContents.on('did-fail-load', (event, errorCode, errorDescription) => {
