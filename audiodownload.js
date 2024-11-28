@@ -2,6 +2,7 @@ const { app, ipcMain } = require("electron");
 const path = require("path");
 const datastore = require("./datastore.js");
 const taskTranscodeAudio = require('./task.transcode.audio');
+const {getEqualizerData} = require("./datastore");
 
 // ipc handler process and save 
 ipcMain.handle('file:processAndSave', async (event) => {
@@ -9,13 +10,14 @@ ipcMain.handle('file:processAndSave', async (event) => {
         const outputDir = app.getPath('temp'); // Katalog tymczasowy
         const outputFilePath = path.join(outputDir, "test.mp3"); // Ścieżka docelowego pliku
 
-        // Przetwarzanie audio
         //let returnFFmpeg = await processAudio({ datastore }, outputFilePath);
         const inputFilenameWithPath = datastore.getWaveformPath();
         const transcode = new taskTranscodeAudio.TaskTranscodeAudio();
         transcode.inputFile = inputFilenameWithPath;
         transcode.outputFile = outputFilePath;
         // TODO should be created from the file
+        //getEqualizerData()
+
         transcode.audioFilter = [
             'volume=-12dB',
             'channelsplit=channel_layout=stereo[left][right]',
