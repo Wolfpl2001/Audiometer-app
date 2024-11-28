@@ -3,8 +3,11 @@ $(document).ready(function() {
   $("#audiodiagram").prop('disabled', true);
   $("#richting").prop('disabled', true);
   // $("#downoload").prop('disabled', true);
-  
+
+  //
   // Handle audio file upload through dialog in Renderer process and save the waveform path
+  //
+
   $("#audiobestand").click(async function() {
     console.log('Audio file button clicked');  
     const result = await window.electron.uploadAudioFile();
@@ -13,16 +16,25 @@ $(document).ready(function() {
       const filePath = result.filePath;
       console.log('Selected file path:', filePath);
       
-      // call the saveWaveformPath function
+      //
+      // call the saveWaveformPath function to save the waveform path
+      //
+
       window.electron.saveWaveformPath({ waveformPath: filePath })
         .then(async (response) => {
           console.log('Waveform path saved:', response.waveformPath);
-  
+          
+          //
           // generate waveform image
+          //
+
           const waveformImagePath = await window.electron.generateWaveform(response.waveformPath);
           console.log('Waveform image generated at:', waveformImagePath); 
-  
-          // display waveform image
+          
+          //
+          // display waveform image on the page
+          //
+
           const waveformImage = document.getElementById('waveformImage');
           waveformImage.src = `file://${waveformImagePath}`;
           waveformImage.style.display = 'block'; 
@@ -36,7 +48,9 @@ $(document).ready(function() {
   });
   
   
-
+//
+// Disable the audio file button and enable the audio diagram button where ther is waveform path
+//
   $("#audiodiagram").click(function() {
     console.log('Audiodiagram gekozen');
     $("#richting").prop('disabled', false);
@@ -53,12 +67,18 @@ $(document).ready(function() {
   });
 });
 
+//
 // Handle file dialog
+//
+
 document.getElementById('openFileBtn').addEventListener('click', () => {
   window.electron.send('open-file-dialog');
 });
 
-// Handle parsed file data
+//
+// Handle file data from Main process 
+//
+
 window.electron.on('file-data', (event, data) => {
   parseXML(data.content, (err, result) => {
     if (err) {
@@ -71,7 +91,10 @@ window.electron.on('file-data', (event, data) => {
   });
 });
 
+//
 // XML parsing function
+//
+
 function parseXML(xmlString, callback) {
   try {
     const parser = new DOMParser();
@@ -82,7 +105,10 @@ function parseXML(xmlString, callback) {
   }
 }
 
+//
 // Extract frequency data from XML
+//
+
 function extractFrequencyData(parsedXml) {
   const parametersNode = parsedXml.getElementsByTagName('Parameters')[0];
   if (!parametersNode) {
@@ -96,6 +122,10 @@ function extractFrequencyData(parsedXml) {
   const leftEar = [];
   const rightEar = [];
   const half = Math.floor(lines.length / 2);
+
+  //
+  // Extract frequency and value data from each line and separate them into left and right ear arrays
+  //
 
   lines.forEach((line, index) => {
     if (/^[\d\s.-]+$/.test(line)) {
@@ -117,21 +147,28 @@ function extractFrequencyData(parsedXml) {
     }
   });
 
+  //
+  // Sort and remove duplicates from the extracted data arrays
+  //
   const sortAndRemoveDuplicates = (data) => {
     return data.sort((a, b) => a[1] - b[1]).filter((item, index, self) =>
       index === self.findIndex((t) => t[1] === item[1])
     );
   };
 
+  //
+  // Display the sorted and duplicate-free left and right ear frequencies
+  //
   const sortedLeftEar = sortAndRemoveDuplicates(leftEar);
   const sortedRightEar = sortAndRemoveDuplicates(rightEar);
-  console.log('Left ear frequencies:', sortedLeftEar);
-  console.log('Right ear frequencies:', sortedRightEar);
   
   return { leftEar: sortedLeftEar, rightEar: sortedRightEar };
 }
 
-// Draw chart function
+//
+// Draw chart function to display the extracted frequency data
+//
+
 function drawChart(frequencies) {
   window.electron.saveEqualizerData(frequencies)
   .then(response => {
@@ -146,12 +183,19 @@ function drawChart(frequencies) {
     return;
   }
 
+  //
+  // Extract left and right ear labels and data from the frequencies object
+  //
+
   const leftEarLabels = frequencies.leftEar.map(f => f[1]);
   const leftEarData = frequencies.leftEar.map(f => f[0]);
   const rightEarLabels = frequencies.rightEar.map(f => f[1]);
   const rightEarData = frequencies.rightEar.map(f => f[0]);
   
 
+  //
+  // Create a new chart object to display the extracted frequency data
+  //
 
   new Chart(ctx, {
     type: 'line',
@@ -203,6 +247,8 @@ function drawChart(frequencies) {
     }
 }
 
-// Wywołanie automatyczne
+//
+// Handle the process button click event
+//
 document.getElementById('processButton').addEventListener('click', downloadProcessedFile);
 }

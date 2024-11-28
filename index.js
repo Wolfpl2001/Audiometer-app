@@ -1,3 +1,9 @@
+//
+// Description: Main file for the Electron app.
+// 
+// This file contains the main process of the Electron app. It creates the main window and handles the communication between the main process and the renderer process using IPC (Inter-Process Communication). 
+//
+
 const { app, BrowserWindow, dialog, ipcMain } = require('electron');
 const path = require('path');
 const fs = require('fs');  // Import fs module
@@ -6,7 +12,10 @@ const ffmpegStatic = require('ffmpeg-static');  // Import ffmpeg-static to get f
 const datastore = require('./datastore.js'); // Import datastore module
 const audiodownload = require('./audiodownload.js'); // Import audiodownload module
 
+//
 // Create the main window
+//
+
 const createWindow = () => {
   const win = new BrowserWindow({
     width: 1800,
@@ -29,12 +38,17 @@ const createWindow = () => {
   });
 };
 
+//
 // Create the main window when the app is ready
+//
+
 app.whenReady().then(() => {
   createWindow();
 
+  //
+  // Call the functions to save and get waveform path and equalizer data
+  //
 
-  // Inicjalizacja funkcji w datastore
   datastore.saveWaveformPath();
   datastore.getWaveformPath();
   datastore.saveEqualizerData();
@@ -48,8 +62,10 @@ app.whenReady().then(() => {
   });
 });
 
-
+//
 // Handle audio file upload through dialog
+//
+
 ipcMain.handle('dialog:uploadAudioFile', async () => {
   const result = await dialog.showOpenDialog({
     properties: ['openFile'],
@@ -63,13 +79,19 @@ ipcMain.handle('dialog:uploadAudioFile', async () => {
   return { canceled: false, filePath, fileContent };
 });
 
+//
 // Handle FFmpeg path request from Renderer process
+//
+
 ipcMain.handle('getFfmpegPath', async () => {
   // Return the FFmpeg executable path
   return ffmpegStatic;
 });
 
-// Handle waveform generation request
+//
+// Handle waveform generation request from Renderer process
+//
+
 ipcMain.handle('generateWaveform', async (event, filePath) => {
   const waveformImagePath = path.join(app.getPath('temp'), 'waveform.png');  
   return new Promise((resolve, reject) => {
@@ -92,8 +114,10 @@ ipcMain.handle('generateWaveform', async (event, filePath) => {
   });
 });
 
+//
+// Handle file dialog for XML files from Renderer process and read the file content
+//
 
-// Handle file dialog for XML files
 ipcMain.on('open-file-dialog', async (event) => {
   const result = await dialog.showOpenDialog({
     properties: ['openFile'],
@@ -108,7 +132,10 @@ ipcMain.on('open-file-dialog', async (event) => {
   event.reply('file-data', { filePath, content: fileContent });
 });
 
+//
 // Quit the app when all windows are closed, except on macOS
+//
+
 app.on('window-all-closed', () => {
   if (process.platform !== 'darwin') {
     app.quit();
