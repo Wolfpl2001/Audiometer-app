@@ -94,4 +94,7 @@ main {
 .container {
     display: flex;
   }
+.logos{
+    border-radius: 60px;
+}
   
