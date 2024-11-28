@@ -1,18 +1,23 @@
-const { app, ipcMain } = require("electron");
+const { app, ipcMain, BrowserWindow, Notification, shell } = require("electron");
 const path = require("path");
+const fs = require("fs"); // Import fs
 const datastore = require("./datastore.js");
 const taskTranscodeAudio = require('./task.transcode.audio');
+
 
 // ipc handler process and save 
 ipcMain.handle('file:processAndSave', async (event) => {
     try {
-        const outputDir = app.getPath('temp'); // Katalog tymczasowy
-        const outputFilePath = path.join(outputDir, "test.mp3"); // Ścieżka docelowego pliku
-
-        // Przetwarzanie audio
+        const outputDir = app.getPath('downloads'); 
+        new Notification({
+            title: 'Sound change in progress',
+            body: 'Your audio is being processed and saved',
+          }).show();
         //let returnFFmpeg = await processAudio({ datastore }, outputFilePath);
         const inputFilenameWithPath = datastore.getWaveformPath();
         const transcode = new taskTranscodeAudio.TaskTranscodeAudio();
+        const filenameWithoutExtension = path.basename(inputFilenameWithPath, path.extname(inputFilenameWithPath));
+        const outputFilePath = path.join(outputDir, filenameWithoutExtension + '_processed.mp3');
         transcode.inputFile = inputFilenameWithPath;
         transcode.outputFile = outputFilePath;
         // TODO should be created from the file
@@ -46,8 +51,18 @@ ipcMain.handle('file:processAndSave', async (event) => {
             'volume=-6dB'
         ];
         const transcodeResult = await transcode.transcodeAudioFile();
-        console.log('audiodownload.js -- ipcMain.handle file:proecessAndSave -- transcodeResult: ', transcodeResult);
-        console.log('audiodownload.js -- ipcMain.handle file:proecessAndSave -- File processed and path saved:', outputFilePath);
+        console.log('audiodownload.js -- ipcMain.handle file:processAndSave -- transcodeResult: ', transcodeResult);
+        console.log('audiodownload.js -- ipcMain.handle file:processAndSave -- File processed and path saved:', outputFilePath);
+        new Notification({
+            title: 'sound change completed',
+            body: 'Audio has been processed and saved. Path: ' + outputFilePath,
+            actions: [
+                {
+                  type: 'button',
+                  text: 'Open Folder'
+                }
+              ]
+          }).show();
         return { success: true, outputFilePath };
     } catch (error) {
         console.error('Error processing file:', error);
