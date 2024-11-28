@@ -5,27 +5,49 @@ const datastore = require("./datastore.js");
 const taskTranscodeAudio = require('./task.transcode.audio');
 const {getEqualizerData} = require("./datastore");
 
-
+//
 // ipc handler process and save 
+//
+
 ipcMain.handle('file:processAndSave', async (event) => {
     try {
-        const outputDir = app.getPath('temp'); // Katalog tymczasowy
-        //const outputFilePath = path.join(outputDir, "test.mp3"); // Ścieżka docelowego pliku
+        const outputDir = app.getPath('temp'); 
+        //const outputFilePath = path.join(outputDir, "test.mp3"); 
 
        // const outputDir = app.getPath('downloads');
+
+        //
+        //   Notification that the sound is being processed 
+        //
+
         new Notification({
             title: 'Sound change in progress',
             body: 'Your audio is being processed and saved',
           }).show();
+
+          //
+          //  get the waveform path from the datastore and transcode the audio
+          //
+
         //let returnFFmpeg = await processAudio({ datastore }, outputFilePath);
         const inputFilenameWithPath = datastore.getWaveformPath();
         const transcode = new taskTranscodeAudio.TaskTranscodeAudio();
+
+        //
+        //  Set the input and output file paths
+        //
+
         const filenameWithoutExtension = path.basename(inputFilenameWithPath, path.extname(inputFilenameWithPath));
         const outputFilePath = path.join(outputDir, filenameWithoutExtension + '_processed.mp3');
         transcode.inputFile = inputFilenameWithPath;
         transcode.outputFile = outputFilePath;
         // TODO should be created from the file
         //getEqualizerData()
+
+        //
+        // Set the audio filter
+        //  
+
 
         transcode.audioFilter = [
             'volume=-12dB',
@@ -56,9 +78,19 @@ ipcMain.handle('file:processAndSave', async (event) => {
             'dynaudnorm',
             'volume=-6dB'
         ];
+
+        //
+        // Transcode the audio file
+        //
+        
         const transcodeResult = await transcode.transcodeAudioFile();
         console.log('audiodownload.js -- ipcMain.handle file:processAndSave -- transcodeResult: ', transcodeResult);
         console.log('audiodownload.js -- ipcMain.handle file:processAndSave -- File processed and path saved:', outputFilePath);
+
+        //  
+        //  Notification that the sound has been processed and saved
+        //
+
         new Notification({
             title: 'sound change completed',
             body: 'Audio has been processed and saved. Path: ' + outputFilePath,
