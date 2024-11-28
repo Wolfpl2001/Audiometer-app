@@ -3,12 +3,16 @@ const path = require("path");
 const fs = require("fs"); // Import fs
 const datastore = require("./datastore.js");
 const taskTranscodeAudio = require('./task.transcode.audio');
+const {getEqualizerData} = require("./datastore");
 
 
 // ipc handler process and save 
 ipcMain.handle('file:processAndSave', async (event) => {
     try {
-        const outputDir = app.getPath('downloads'); 
+        const outputDir = app.getPath('temp'); // Katalog tymczasowy
+        //const outputFilePath = path.join(outputDir, "test.mp3"); // Ścieżka docelowego pliku
+
+       // const outputDir = app.getPath('downloads');
         new Notification({
             title: 'Sound change in progress',
             body: 'Your audio is being processed and saved',
@@ -21,6 +25,8 @@ ipcMain.handle('file:processAndSave', async (event) => {
         transcode.inputFile = inputFilenameWithPath;
         transcode.outputFile = outputFilePath;
         // TODO should be created from the file
+        //getEqualizerData()
+
         transcode.audioFilter = [
             'volume=-12dB',
             'channelsplit=channel_layout=stereo[left][right]',
