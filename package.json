@@ -35,14 +35,16 @@
       "assets/**/*",
       "frontend/**/*",
       "datastore.js",
-      "preload.js"
+      "preload.js",
+      "audiodownload.js",
+      "task.transcode.audio.js"
     ],
     "directories": {
       "output": "release"
     },
     "win": {
       "target": "nsis",
-      "icon": "assets/icon.ico"
+      "icon": "assetse/icon.ico"
     },
     "nsis": {
       "oneClick": false,

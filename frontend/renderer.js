@@ -168,19 +168,25 @@ function extractFrequencyData(parsedXml) {
 //
 // Draw chart function to display the extracted frequency data
 //
+async function drawChart(frequencies) {
+  try {
+    console.log('Saving equalizer data:', frequencies);
+      const response = await window.electron.saveEqualizerData(frequencies);
+      console.log('Equalizer data saved successfully:', response);
+  } catch (error) {
+      console.error('Failed to save equalizer data:', error);
+  }
 
-function drawChart(frequencies) {
-  window.electron.saveEqualizerData(frequencies)
-  .then(response => {
-    console.log('Equalizer data saved successfully:', response);
-  })
-  .catch(error => {
-    console.error('Failed to save equalizer data:', error);
-  });
-  const ctx = document.getElementById('frequencyChart').getContext('2d');
+  const canvas = document.getElementById('frequencyChart');
+  if (!canvas) {
+      console.error('Canvas element with id "frequencyChart" not found.');
+      return;
+  }
+
+  const ctx = canvas.getContext('2d');
   if (!ctx) {
-    console.error('Failed to get canvas context');
-    return;
+      console.error('Failed to get canvas context');
+      return;
   }
 
   //

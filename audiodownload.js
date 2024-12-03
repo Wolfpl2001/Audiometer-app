@@ -1,54 +1,44 @@
-const { app, ipcMain, BrowserWindow, Notification, shell } = require("electron");
+const { app, ipcMain, BrowserWindow, Notification, shell, dialog } = require("electron");
 const path = require("path");
-const fs = require("fs"); // Import fs
+const fs = require("fs");
 const datastore = require("./datastore.js");
 const taskTranscodeAudio = require('./task.transcode.audio');
-const {getEqualizerData} = require("./datastore");
-
-//
-// ipc handler process and save 
-//
 
 ipcMain.handle('file:processAndSave', async (event) => {
     try {
-        const outputDir = app.getPath('temp'); 
-        //const outputFilePath = path.join(outputDir, "test.mp3"); 
+        // Allow the user to select a target folder
+        const folderResult = await dialog.showOpenDialog({
+            title: "Select Folder to Save Processed Audio",
+            properties: ['openDirectory']
+        });
 
-       // const outputDir = app.getPath('downloads');
+        if (folderResult.canceled) {
+            return { success: false, message: "No folder selected" };
+        }
 
-        //
-        //   Notification that the sound is being processed 
-        //
+        const selectedFolder = folderResult.filePaths[0];
 
+        // Notification about the start of audio processing
         new Notification({
             title: 'Sound change in progress',
             body: 'Your audio is being processed and saved',
-          }).show();
+        }).show();
 
-          //
-          //  get the waveform path from the datastore and transcode the audio
-          //
-
-        //let returnFFmpeg = await processAudio({ datastore }, outputFilePath);
+        // Retrieve the input file path
         const inputFilenameWithPath = datastore.getWaveformPath();
+        if (!inputFilenameWithPath || !fs.existsSync(inputFilenameWithPath)) {
+            throw new Error('Invalid waveform path or file does not exist.');
+        }
+
+        // Prepare for transcoding
         const transcode = new taskTranscodeAudio.TaskTranscodeAudio();
-
-        //
-        //  Set the input and output file paths
-        //
-
         const filenameWithoutExtension = path.basename(inputFilenameWithPath, path.extname(inputFilenameWithPath));
-        const outputFilePath = path.join(outputDir, filenameWithoutExtension + '_processed.mp3');
+        const outputFilePath = path.join(selectedFolder, filenameWithoutExtension + '_processed.wav');
+
         transcode.inputFile = inputFilenameWithPath;
         transcode.outputFile = outputFilePath;
-        // TODO should be created from the file
-        //getEqualizerData()
 
-        //
         // Set the audio filter
-        //  
-
-
         transcode.audioFilter = [
             'volume=-12dB',
             'channelsplit=channel_layout=stereo[left][right]',
@@ -79,31 +69,29 @@ ipcMain.handle('file:processAndSave', async (event) => {
             'volume=-6dB'
         ];
 
-        //
         // Transcode the audio file
-        //
-        
         const transcodeResult = await transcode.transcodeAudioFile();
-        console.log('audiodownload.js -- ipcMain.handle file:processAndSave -- transcodeResult: ', transcodeResult);
-        console.log('audiodownload.js -- ipcMain.handle file:processAndSave -- File processed and path saved:', outputFilePath);
+        console.log('[INFO] Transcoding completed:', transcodeResult);
 
-        //  
-        //  Notification that the sound has been processed and saved
-        //
+        // Notification about the completion of audio processing
+        dialog.showMessageBox({
+          type: 'info',
+          title: 'Processing Complete',
+          message: 'Your audio file has been successfully processed.',
+          buttons: ['Open Folder', 'OK']
+      }).then(result => {
+          if (result.response === 0) { // Indeks 0 odpowiada przyciskowi "Open Folder"
+              shell.openPath(selectedFolder).then(response => {
+                  if (response) {
+                      console.error('Error opening folder:', response);
+                  }
+              });
+          }
+      });
 
-        new Notification({
-            title: 'sound change completed',
-            body: 'Audio has been processed and saved. Path: ' + outputFilePath,
-            actions: [
-                {
-                  type: 'button',
-                  text: 'Open Folder'
-                }
-              ]
-          }).show();
-        return { success: true, outputFilePath };
+        return { success: true, selectedFolder };
     } catch (error) {
-        console.error('Error processing file:', error);
+        console.error('[ERROR] Processing file:', error.message);
         return { success: false, error: error.message };
     }
 });

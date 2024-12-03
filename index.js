@@ -11,7 +11,6 @@ const ffmpeg = require('fluent-ffmpeg');  // Import fluent-ffmpeg
 const ffmpegStatic = require('ffmpeg-static');  // Import ffmpeg-static to get ffmpeg path
 const datastore = require('./datastore.js'); // Import datastore module
 const audiodownload = require('./audiodownload.js'); // Import audiodownload module
-
 //
 // Create the main window
 //
@@ -24,10 +23,16 @@ const createWindow = () => {
     webPreferences: {
       preload: path.join(__dirname, 'preload.js'),
       contextIsolation: true,
+      // Hide the Dev tools in the window USE ONLY FOR RELEASE
+      devTools: true,
+      //
       enableRemoteModule: false,
       nodeIntegration: false,
       sandbox: true,
-    }
+    },
+    // Hide the menu bar in the window USE ONLY FOR RELEASE
+    autoHideMenuBar: false
+    //
   });
 
   win.loadFile('frontend/login.html');
