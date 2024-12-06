@@ -1,5 +1,6 @@
 
 $(document).ready(function() {
+  window.frequencyData = null;
   $("#audiodiagram").prop('disabled', true);
   $("#richting").prop('disabled', true);
   // $("#downoload").prop('disabled', true);
@@ -63,7 +64,7 @@ $(document).ready(function() {
 
   $("#downoload").click(function() {
     console.log('Download gestart');
-    window.electron.processAudio();
+    window.electron.processAudio(window.frequencyData );
   });
 });
 
@@ -86,6 +87,7 @@ window.electron.on('file-data', (event, data) => {
     } else {
       const extractedData = extractFrequencyData(result);
       drawChart(extractedData);
+      window.frequencyData  = extractedData;
       document.getElementById('processAudioBtn').disabled = false;
     }
   });
@@ -169,13 +171,6 @@ function extractFrequencyData(parsedXml) {
 // Draw chart function to display the extracted frequency data
 //
 async function drawChart(frequencies) {
-  try {
-    console.log('Saving equalizer data:', frequencies);
-      const response = await window.electron.saveEqualizerData(frequencies);
-      console.log('Equalizer data saved successfully:', response);
-  } catch (error) {
-      console.error('Failed to save equalizer data:', error);
-  }
 
   const canvas = document.getElementById('frequencyChart');
   if (!canvas) {
@@ -233,7 +228,7 @@ async function drawChart(frequencies) {
   });
   async function downloadProcessedFile() {
     try {
-        const { success, outputFilePath, error } = await ipcRenderer.invoke('file:processAndSave', );
+        const { success, outputFilePath, error } = await ipcRenderer.invoke('file:processAndSave');
         if (success) {
             console.log('File processed and saved:', outputFilePath);
 

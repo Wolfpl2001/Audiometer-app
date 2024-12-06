@@ -4,7 +4,8 @@ const fs = require("fs");
 const datastore = require("./datastore.js");
 const taskTranscodeAudio = require('./task.transcode.audio');
 
-ipcMain.handle('file:processAndSave', async (event) => {
+ipcMain.handle('file:processAndSave', async (event, freqdata) => {
+    console.log('frequency data from FE:', freqdata);
     try {
         // Allow the user to select a target folder
         const folderResult = await dialog.showOpenDialog({
@@ -39,6 +40,7 @@ ipcMain.handle('file:processAndSave', async (event) => {
         transcode.outputFile = outputFilePath;
 
         // Set the audio filter
+        // TODO map freqdata like data below
         transcode.audioFilter = [
             'volume=-12dB',
             'channelsplit=channel_layout=stereo[left][right]',
