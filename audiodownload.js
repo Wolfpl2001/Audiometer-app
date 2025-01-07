@@ -13,6 +13,54 @@ ipcMain.handle('file:processAndSave', async (event, freqdata) => {
             properties: ['openDirectory']
         });
 
+        /*[
+            'volume=-12dB',
+            'channelsplit=channel_layout=stereo[left][right]',
+            '[left]equalizer=f=125:width_type=h:width=200:g=0.0[a]',
+            '[right]equalizer=f=125:width_type=h:width=200:g=5.0[b]',
+            '[a]equalizer=f=250:width_type=h:width=200:g=5.0[a]',
+            '[b]equalizer=f=250:width_type=h:width=200:g=0.0[b]',
+            '[a]equalizer=f=500:width_type=h:width=200:g=0.0[a]',
+            '[b]equalizer=f=500:width_type=h:width=200:g=-5.0[b]',
+            '[a]equalizer=f=750:width_type=h:width=200:g=0.0[a]',
+            '[b]equalizer=f=750:width_type=h:width=200:g=5.0[b]',
+            '[a]equalizer=f=1000:width_type=h:width=200:g=15.0[a]',
+            '[b]equalizer=f=1000:width_type=h:width=200:g=15.0[b]',
+            '[a]equalizer=f=1500:width_type=h:width=200:g=10.0[a]',
+            '[b]equalizer=f=1500:width_type=h:width=200:g=15.0[b]',
+            '[a]equalizer=f=2000:width_type=h:width=200:g=10.0[a]',
+            '[b]equalizer=f=2000:width_type=h:width=200:g=15.0[b]',
+            '[a]equalizer=f=3000:width_type=h:width=200:g=10.0[a]',
+            '[b]equalizer=f=3000:width_type=h:width=200:g=10.0[b]',
+            '[a]equalizer=f=4000:width_type=h:width=200:g=10.0[a]',
+            '[b]equalizer=f=4000:width_type=h:width=200:g=10.0[b]',
+            '[a]equalizer=f=6000:width_type=h:width=200:g=15.0[a]',
+            '[b]equalizer=f=6000:width_type=h:width=200:g=15.0[b]',
+            '[a]equalizer=f=8000:width_type=h:width=200:g=20.0[a]',
+            '[b]equalizer=f=8000:width_type=h:width=200:g=15.0[b]',
+            '[a][b]join=inputs=2:channel_layout=stereo',
+            'dynaudnorm',
+            'volume=-6dB'
+        ];*/
+
+        let audioFilter = [];
+        //
+        audioFilter.push('volume=-12dB');
+        audioFilter.push('channelsplit=channel_layout=stereo[left][right]');
+        for(let i = 0; i < freqdata.leftEar.length; i++) {
+            let freqdataRow = freqdata.leftEar[i];
+            let frequency = freqdataRow[0];
+            let decibel = freqdataRow[1];
+            if( i == 0 ) {
+                // TODO look into makein freqdataRow[0] decibel into decimal
+                audioFilter.push('[left]equalizer=f=' + frequency + ':width_type=h:width=200:g=' + decibel+ '[a]')
+            } else {
+                audioFilter.push('[a]equalizer=f=' + frequency + ':width_type=h:width=200:g=' + frequency + '[a]');
+            }
+        }
+
+
+
         if (folderResult.canceled) {
             return { success: false, message: "No folder selected" };
         }
@@ -41,35 +89,7 @@ ipcMain.handle('file:processAndSave', async (event, freqdata) => {
 
         // Set the audio filter
         // TODO map freqdata like data below
-        transcode.audioFilter = [
-            'volume=-12dB',
-            'channelsplit=channel_layout=stereo[left][right]',
-            '[left]equalizer=f=125:width_type=h:width=200:g=0.0[a]',
-            '[right]equalizer=f=125:width_type=h:width=200:g=5.0[b]',
-            '[a]equalizer=f=250:width_type=h:width=200:g=5.0[a]',
-            '[b]equalizer=f=250:width_type=h:width=200:g=0.0[b]',
-            '[a]equalizer=f=500:width_type=h:width=200:g=0.0[a]',
-            '[b]equalizer=f=500:width_type=h:width=200:g=-5.0[b]',
-            '[a]equalizer=f=750:width_type=h:width=200:g=0.0[a]',
-            '[b]equalizer=f=750:width_type=h:width=200:g=5.0[b]',
-            '[a]equalizer=f=1000:width_type=h:width=200:g=15.0[a]',
-            '[b]equalizer=f=1000:width_type=h:width=200:g=15.0[b]',
-            '[a]equalizer=f=1500:width_type=h:width=200:g=10.0[a]',
-            '[b]equalizer=f=1500:width_type=h:width=200:g=15.0[b]',
-            '[a]equalizer=f=2000:width_type=h:width=200:g=10.0[a]',
-            '[b]equalizer=f=2000:width_type=h:width=200:g=15.0[b]',
-            '[a]equalizer=f=3000:width_type=h:width=200:g=10.0[a]',
-            '[b]equalizer=f=3000:width_type=h:width=200:g=10.0[b]',
-            '[a]equalizer=f=4000:width_type=h:width=200:g=10.0[a]',
-            '[b]equalizer=f=4000:width_type=h:width=200:g=10.0[b]',
-            '[a]equalizer=f=6000:width_type=h:width=200:g=15.0[a]',
-            '[b]equalizer=f=6000:width_type=h:width=200:g=15.0[b]',
-            '[a]equalizer=f=8000:width_type=h:width=200:g=20.0[a]',
-            '[b]equalizer=f=8000:width_type=h:width=200:g=15.0[b]',
-            '[a][b]join=inputs=2:channel_layout=stereo',
-            'dynaudnorm',
-            'volume=-6dB'
-        ];
+        transcode.audioFilter = audioFilter;
 
         // Transcode the audio file
         const transcodeResult = await transcode.transcodeAudioFile();
