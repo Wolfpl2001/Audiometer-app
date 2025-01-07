@@ -42,22 +42,39 @@ ipcMain.handle('file:processAndSave', async (event, freqdata) => {
             'dynaudnorm',
             'volume=-6dB'
         ];*/
-
+        // TODO check freqdata
+        // TODO check freqdata.leftEar....
         let audioFilter = [];
         //
         audioFilter.push('volume=-12dB');
         audioFilter.push('channelsplit=channel_layout=stereo[left][right]');
         for(let i = 0; i < freqdata.leftEar.length; i++) {
             let freqdataRow = freqdata.leftEar[i];
-            let frequency = freqdataRow[0];
-            let decibel = freqdataRow[1];
+            let frequency = freqdataRow[1];
+            let decibel = freqdataRow[0];
             if( i == 0 ) {
                 // TODO look into makein freqdataRow[0] decibel into decimal
-                audioFilter.push('[left]equalizer=f=' + frequency + ':width_type=h:width=200:g=' + decibel+ '[a]')
+                audioFilter.push('[left]equalizer=f=' + frequency + ':width_type=h:width=200:g=' + decibel + '[a]')
             } else {
-                audioFilter.push('[a]equalizer=f=' + frequency + ':width_type=h:width=200:g=' + frequency + '[a]');
+                audioFilter.push('[a]equalizer=f=' + frequency + ':width_type=h:width=200:g=' + decibel + '[a]');
             }
         }
+        for(let i = 0; i < freqdata.rightEar.length; i++) {
+            let freqdataRow = freqdata.rightEar[i];
+            let frequency = freqdataRow[1];
+            let decibel = freqdataRow[0];
+            if( i == 0 ) {
+                // TODO look into makein freqdataRow[0] decibel into decimal
+                audioFilter.push('[right]equalizer=f=' + frequency + ':width_type=h:width=200:g=' + decibel + '[b]')
+            } else {
+                audioFilter.push('[b]equalizer=f=' + frequency + ':width_type=h:width=200:g=' + decibel + '[b]');
+            }
+        }
+        audioFilter.push('[a][b]join=inputs=2:channel_layout=stereo')
+        audioFilter.push('dynaudnorm')
+        audioFilter.push('volume=-6dB')
+
+
 
 
 
