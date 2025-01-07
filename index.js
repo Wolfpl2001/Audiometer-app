@@ -36,7 +36,6 @@ const createWindow = () => {
   });
 
   win.loadFile('frontend/login.html');
-
   // Add error handling for preload script
   win.webContents.on('did-fail-load', (event, errorCode, errorDescription) => {
     console.error('Failed to load preload script:', errorDescription);
