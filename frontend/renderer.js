@@ -125,21 +125,32 @@ function extractFrequencyData(parsedXml) {
   const rightEar = [];
   const half = Math.floor(lines.length / 2);
 
-  //
-  // Extract frequency and value data from each line and separate them into left and right ear arrays
-  //
+  const optimalCurve = [20, 15, 12, 10, 5, 0, -5, -10, -10, -5, 0]; // Zakładając, że jest to optymalna krzywa
 
   lines.forEach((line, index) => {
     if (/^[\d\s.-]+$/.test(line)) {
-      const matches = line.match(/(\d+)\s(\d+)\s(\d+(\.\d+)?)\s(\d+)\s(\d+)/);
+      const matches = line.match(/(-?\d+)\s(-?\d+)\s(-?\d+(\.\d+)?)\s(-?\d+)\s(-?\d+)/);
       if (matches) {
-        const value = parseFloat(matches[3]);
-        const frequency = parseInt(matches[5]);
+        let linkDiff = parseFloat(matches[3]); // Odczytana wartość `linkDiff` z danych
+        const frequency = parseInt(matches[5]); // Częstotliwość z danych
 
-        if (index < (half - 1)) {
-          leftEar.push([value, frequency]);
+        // Odwracamy formułę, aby odczytać dane
+        const optimalValue = optimalCurve[index % optimalCurve.length]; // Odpowiednia wartość z `optimalCurve`
+        let calculatedValue;
+
+        if (linkDiff > 0) {
+          // Jeśli linkDiff > 0, to wykonujemy obliczenia w sposób odwrotny
+          calculatedValue = (linkDiff / 0.4) + optimalValue; // Odwrócona formuła dla wartości dodatnich
         } else {
-          rightEar.push([value, frequency]);
+          // Jeśli linkDiff <= 0, to wykonujemy obliczenia w sposób odwrotny
+          calculatedValue = (linkDiff / 0.6) + optimalValue; // Odwrócona formuła dla wartości ujemnych
+        }
+
+        // Podział na lewe i prawe ucho
+        if (index < half-1) {
+          leftEar.push([calculatedValue, frequency]);
+        } else {
+          rightEar.push([calculatedValue, frequency]);
         }
       } else {
         console.log('No matches for line:', line);
@@ -149,23 +160,25 @@ function extractFrequencyData(parsedXml) {
     }
   });
 
-  //
-  // Sort and remove duplicates from the extracted data arrays
-  //
   const sortAndRemoveDuplicates = (data) => {
     return data.sort((a, b) => a[1] - b[1]).filter((item, index, self) =>
       index === self.findIndex((t) => t[1] === item[1])
     );
   };
 
-  //
-  // Display the sorted and duplicate-free left and right ear frequencies
-  //
-  const sortedLeftEar = sortAndRemoveDuplicates(leftEar);
-  const sortedRightEar = sortAndRemoveDuplicates(rightEar);
-  
-  return { leftEar: sortedLeftEar, rightEar: sortedRightEar };
+  const reversedLeftEar = sortAndRemoveDuplicates(leftEar);
+  const reversedRightEar = sortAndRemoveDuplicates(rightEar);
+
+  console.log('Left Ear:', reversedLeftEar);
+  console.log('Right Ear:', reversedRightEar);
+  return { leftEar: reversedLeftEar, rightEar: reversedRightEar };
 }
+
+
+
+
+
+
 
 //
 // Draw chart function to display the extracted frequency data
@@ -193,11 +206,8 @@ async function drawChart(frequencies) {
   const rightEarLabels = frequencies.rightEar.map(f => f[1]);
   const rightEarData = frequencies.rightEar.map(f => f[0]);
   
-
-  //
-  // Create a new chart object to display the extracted frequency data
-  //
-
+  const optimal = [20, 15, 12, 10, 5, 0, -5, -10, -10, -5, 0];
+  
   new Chart(ctx, {
     type: 'line',
     data: {
@@ -216,16 +226,35 @@ async function drawChart(frequencies) {
           borderColor: 'rgba(192, 75, 75, 1)',
           borderWidth: 2,
           fill: false
+        },
+        {
+          label: 'Optimal curve',
+          data: optimal,
+          borderColor: 'rgba(0, 0, 0, 0.59)',
+          borderWidth: 2,
+          fill: false
         }
       ]
     },
     options: {
       scales: {
-        x: { title: { display: true, text: 'Frequencies (Hz)' } },
-        y: { title: { display: true, text: 'Values (dB)' } }
+        x: {
+          title: {
+            display: true,
+            text: 'Frequencies (Hz)'
+          }
+        },
+        y: {
+          title: {
+            display: true,
+            text: 'Values (dB)'
+          },
+          reverse: true // Odwrócenie osi Y
+        }
       }
     }
   });
+  
   async function downloadProcessedFile() {
     try {
         const { success, outputFilePath, error } = await ipcRenderer.invoke('file:processAndSave');
