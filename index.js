@@ -41,6 +41,14 @@ const createWindow = () => {
     console.error('Failed to load preload script:', errorDescription);
   });
 };
+ipcMain.on('set-title', (event, richting) => {
+  const webContents = event.sender
+  const win = BrowserWindow.fromWebContents(webContents)
+  win.setTitle(richting)
+})
+
+
+
 
 //
 // Create the main window when the app is ready

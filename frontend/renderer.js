@@ -62,8 +62,10 @@ $(document).ready(function() {
   //   $("#downoload").prop('disabled', false);
   // });
 
-  $("#downoload").click(function() {
+  $("#download").click(function() {
     console.log('Download gestart');
+    // richting option mee laten sturen naar backend
+    window.frequencyData.richting = 'Ophalen uit formulier';
     window.electron.processAudio(window.frequencyData );
   });
 });
@@ -175,7 +177,13 @@ function extractFrequencyData(parsedXml) {
 }
 
 
-
+const selectForm = document.getElementById('select')
+const optionInput = document.getElementById('option')
+selectForm.addEventListener('change', () => {
+  const richting = optionInput.value
+  console.log(richting)
+  window.electronAPI.setTitle(richting)
+})
 
 
 

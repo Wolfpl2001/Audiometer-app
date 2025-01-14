@@ -15,6 +15,5 @@ contextBridge.exposeInMainWorld(
    // saveEqualizerData: (equalizerData) => ipcRenderer.invoke('saveEqualizerData', equalizerData),
     saveWaveformPath: (path) => ipcRenderer.invoke('saveWaveformPath', path),
     processAudio: (freqdata) => ipcRenderer.invoke('file:processAndSave', freqdata),
-
-}
+  }
 );

@@ -12,7 +12,6 @@ ipcMain.handle('file:processAndSave', async (event, freqdata) => {
             title: "Select Folder to Save Processed Audio",
             properties: ['openDirectory']
         });
-
         /*[
             'volume=-12dB',
             'channelsplit=channel_layout=stereo[left][right]',
@@ -46,8 +45,10 @@ ipcMain.handle('file:processAndSave', async (event, freqdata) => {
         // TODO check freqdata.leftEar....
         let audioFilter = [];
         //
+
         audioFilter.push('volume=-12dB');
         audioFilter.push('channelsplit=channel_layout=stereo[left][right]');
+
         for(let i = 0; i < freqdata.leftEar.length; i++) {
             let freqdataRow = freqdata.leftEar[i];
             let frequency = freqdataRow[1];
