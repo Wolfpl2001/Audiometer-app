@@ -65,7 +65,11 @@ $(document).ready(function() {
   $("#download").click(function() {
     console.log('Download gestart');
     // richting option mee laten sturen naar backend
-    window.frequencyData.richting = 'Ophalen uit formulier';
+
+    var selectedRichting = $('select[name="richting"]').val();
+    console.log('Selected richting:', selectedRichting);
+
+    window.frequencyData.richting = selectedRichting;
     window.electron.processAudio(window.frequencyData );
   });
 });
@@ -176,14 +180,6 @@ function extractFrequencyData(parsedXml) {
   return { leftEar: reversedLeftEar, rightEar: reversedRightEar };
 }
 
-
-const selectForm = document.getElementById('select')
-const optionInput = document.getElementById('option')
-selectForm.addEventListener('change', () => {
-  const richting = optionInput.value
-  console.log(richting)
-  window.electronAPI.setTitle(richting)
-})
 
 
 
