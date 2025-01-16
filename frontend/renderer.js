@@ -2,7 +2,7 @@
 $(document).ready(function() {
   window.frequencyData = null;
   $("#audiodiagram").prop('disabled', true);
-  $("#richting").prop('disabled', true);
+  // $("#richting").prop('disabled', true);
   // $("#downoload").prop('disabled', true);
 
   //

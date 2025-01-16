@@ -72,14 +72,16 @@ table{
 .container {
     display: flex;
     justify-content: center;
-    align-items: center;
+    align-items: left;
     margin-top: 20px;
+    margin-left: auto;
 }
 
 table.rht {
     border-collapse: collapse;
-    width: auto;
-    text-align: center;
+    /* width: auto; */  
+    text-align: left;
+    margin-bottom: 20px;
 }
 
 table.rht td {
@@ -88,21 +90,36 @@ table.rht td {
 }
 
 table.rht b {
-    display: flex;
+    display: flex;  
     
     font-size: 1.5rem;
     /* display: block; */
     margin-bottom: 50px;
 }
-table.rht img {
-    max-width: 200px;
-    height: auto;
-    display: block;
-    margin: 0 auto;
-    padding-top: -95px;
-    /* Centert de afbeeldingen */
+
+#waveformImage{
+    margin-top: -40px;
+}
+#richting {
+    width: 200px;
+    height: 40px;
+    background-color: #f0f0f0;
+    color: #333;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    font-family: Arial, sans-serif;
+    font-size: 16px;
+    padding: 5px;
+    margin: 10px;
 }
 
+#richting option {
+    background-color: #f0f0f0;
+    color: #333;
+    font-family: Arial, sans-serif;
+    font-size: 16px;
+}
 /* Respo */
 @media (max-width: 768px) {
     h1 {
