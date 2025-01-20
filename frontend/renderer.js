@@ -65,7 +65,7 @@ $(document).ready(function() {
   $("#download").click(function() {
     console.log('Download gestart');
     // richting option mee laten sturen naar backend
-
+    window.frequencyData.richting = "Ophalen uit formulier";
     var selectedRichting = $('select[name="richting"]').val();
     console.log('Selected richting:', selectedRichting);
 
