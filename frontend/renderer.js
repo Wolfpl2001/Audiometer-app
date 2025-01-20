@@ -1,20 +1,6 @@
 $(document).ready(function () {
   window.frequencyData = null;
-  $("#audiodiagram").prop("disabled", true);
 
-  // Voeg de nieuwe event-handler toe voor het 'change'-event op het select element
-  const selectForm = document.getElementById("select"); // Selecteer de form
-  const optionInput = document.getElementById("option"); // Selecteer de input
-
-  if (selectForm && optionInput) {
-    selectForm.addEventListener("change", () => {
-      const richting = optionInput.value;
-      console.log("Geselecteerde richting:", richting);
-
-      // Stuur richting naar de main process via electron API
-      window.electronAPI.setTitle(richting);
-    });
-  }
 
   // Audio file upload
   $("#audiobestand").click(async function () {
@@ -52,10 +38,10 @@ $(document).ready(function () {
 
   $("#download").click(function () {
     console.log("Download gestart");
-    var selectedRichting = $('select[name="richting"]').val();
-    console.log("Selected richting:", selectedRichting);
+    var selectedDirection = $('select[name="direction"]').val();
+    console.log("Selected richting:", selectedDirection);
 
-    window.frequencyData.richting = selectedRichting;
+    window.frequencyData.direction = selectedDirection;
     window.electron.processAudio(window.frequencyData);
   });
 });

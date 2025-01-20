@@ -42,10 +42,9 @@ ipcMain.handle('file:processAndSave', async (event, freqdata) => {
             'volume=-6dB'
         ];*/
         // TODO check freqdata
-        // TODO check freqdata.leftEar....
         let audioFilter = [];
+        console.log(freqdata.direction)
         //
-
         audioFilter.push('volume=-12dB');
         audioFilter.push('channelsplit=channel_layout=stereo[left][right]');
 
@@ -60,6 +59,7 @@ ipcMain.handle('file:processAndSave', async (event, freqdata) => {
                 audioFilter.push('[a]equalizer=f=' + frequency + ':width_type=h:width=200:g=' + decibel + '[a]');
             }
         }
+
         for(let i = 0; i < freqdata.rightEar.length; i++) {
             let freqdataRow = freqdata.rightEar[i];
             let frequency = freqdataRow[1];

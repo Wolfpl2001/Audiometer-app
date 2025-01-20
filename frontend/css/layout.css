@@ -101,7 +101,7 @@ table.rht b {
     padding-bottom: 20px;
     margin-top: -40px;
 }
-#richting {
+#direction {
     width: 200px;
     height: 40px;
     background-color: #f0f0f0;
@@ -115,7 +115,7 @@ table.rht b {
     margin: 10px;
 }
 
-#richting option {
+#direction option {
     background-color: #f0f0f0;
     color: #333;
     font-family: Arial, sans-serif;

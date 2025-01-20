@@ -7,7 +7,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const instructions = document.getElementById("instructions");
 
   // Simulatie of tijdelijke gegevens
-  const Dev = false;
+  const Dev = true;
   const correctCode = "TEST-TEST-TEST-TEST";
 
   // Gebruik email en activeer de UI-overgangen
