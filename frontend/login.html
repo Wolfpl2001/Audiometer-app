@@ -1,44 +1,38 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Activate App</title>
     <link rel="stylesheet" href="css/login.css">
 </head>
+
 <body>
     <div class="activation-container">
-        <h1>Activeer jou App</h1>
-        <p>Voer de activeringscode in</p>
-        <form id="activationForm">
-            <input type="text" id="activationCode" placeholder="Activation code" maxlength="19">
-            <button type="button" id="submitButton">Activate</button> 
-        </form>
-        <!-- <form action="email">
+        <h1>Activeer jouw App</h1>
+        <p id="instructions">Voer je e-mailadres in om een activeringscode aan te vragen.</p>
+
+        <!-- E-mail formulier -->
+        <form id="emailForm" class="step active">
             <label for="email">Email</label>
-            <input type="email" id="email" name="email" placeholder="Your Email addres" maxlength="50" required aria-describedby="emailHelp">
-            <small id="emailHelp" class="info">
-                Your Email address is valid
-            </small>
-            <button type="button" id="submitEmail">Email</button>
+            <input type="email" id="email" name="email" placeholder="Your Email Address" maxlength="50" required>
+            <button type="button" id="submitEmail">Aanvragen</button>
+            <small id="emailHelp" class="info">Je e-mailadres wordt gebruikt voor de activatie.</small>
         </form>
-        <p class="info">This code is provided by the app owner.</p>
-    </div> -->
 
+        <!-- Activeringscode formulier -->
+        <form id="activationForm" class="step">
+            <label for="activationCode">Activeringscode</label>
+            <input type="text" id="activationCode" placeholder="Activation Code (e.g., XXXX-XXXX-XXXX)" maxlength="19"
+                required>
+            <button type="button" id="submitButton">Activeer</button>
+            <small class="info">De activeringscode wordt verstrekt door de app-eigenaar.</small>
+        </form>
+    </div>
 
-    <!-- Tijdelijk -->
-    <script src="Tijdelijk.js"></script>
-    <!--! Tijdelijk -->
-    <script>
-        const inputField = document.getElementById('activationCode');
-
-        inputField.addEventListener('input', () => {
-            let value = inputField.value.replace(/-/g, '');
-            value = value.toUpperCase();
-
-            const formattedValue = value.match(/.{1,4}/g)?.join('-') || value;
-            inputField.value = formattedValue;
-        });
-    </script>
+    <!-- JavaScript-bestand -->
+    <script src=" tijdelijk.js"></script>
 </body>
+
 </html>

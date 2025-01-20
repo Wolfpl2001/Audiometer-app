@@ -61,3 +61,17 @@ body {
     font-size: 0.8rem;
     color: #ccc;
 }
+.step {
+    display: none;
+}
+
+.step.active {
+    display: block;
+}
+
+.info {
+    color: #555;
+    font-size: 0.9em;
+    margin-top: 5px;
+    display: block;
+}

@@ -57,6 +57,10 @@ $(document).ready(function() {
     $("#richting").prop('disabled', false);
   });
 
+  // $("#richting").click(function() {
+  //   console.log('Richting gekozen');5
+  //   $("#downoload").prop('disabled', false);
+  // });
 
   $("#download").click(function() {
     console.log('Download gestart');
