@@ -1,0 +1,137 @@
+/* Algemene styling */
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: white;
+    color: black;
+}
+
+main {
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.buttons div {
+    display: flex;
+    text-align: center;
+    margin-bottom: 20px;
+}
+.logos {
+    margin-right: 10px;
+}
+ h1{
+    font-size: 2rem;
+    color: #007bff;
+ }
+
+
+button {
+    background-color: #007bff;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    margin: 10px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 1rem;
+}
+
+button:hover{
+    background-color: #0056b3;
+}
+
+/* Audiodiagram styling */
+.audiodiagram {
+    margin-top: 10px;
+}
+.labels{
+    width: 100%;
+    max-width: 900px;
+}
+canvas{
+    border: 1px solid #ccc;
+    width: 100%;
+    height: auto;
+   
+}
+table{
+    /* display: flex; */
+    width: 100%;
+    text-align: center;
+    margin: auto;
+}
+.buttons td{
+    padding: 10px;
+    border: 1px solid #ccc;
+    font-weight: bold;
+
+}
+.container {
+    display: flex;
+    justify-content: center;
+    align-items: left;
+    margin-top: 20px;
+    margin-left: auto;
+}
+
+table.rht {
+    border-collapse: collapse;
+    /* width: auto; */  
+    text-align: left;
+    margin-bottom: 20px;
+}
+
+table.rht td {
+    padding: 10px;
+    vertical-align: top;
+}
+
+table.rht b {
+    display: flex;  
+    
+    font-size: 1.5rem;
+    /* display: block; */
+    margin-bottom: 50px;
+}
+
+#waveformImage{
+    padding-bottom: 20px;
+    margin-top: -40px;
+}
+#direction {
+    width: 200px;
+    height: 40px;
+    background-color: #f0f0f0;
+    color: #333;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    font-family: Arial, sans-serif;
+    font-size: 16px;
+    padding: 5px;
+    margin: 10px;
+}
+
+#direction option {
+    background-color: #f0f0f0;
+    color: #333;
+    font-family: Arial, sans-serif;
+    font-size: 16px;
+}
+/* Respo */
+@media (max-width: 768px) {
+    h1 {
+        font-size: 1.5rem;
+    }
+
+    button {
+        width: 100%;
+    }
+
+    canvas {
+        width: 100%;
+    }
+}

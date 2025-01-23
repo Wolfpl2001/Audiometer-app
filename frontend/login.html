@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Activate App</title>
+    <link rel="stylesheet" href="css/login.css">
+</head>
+
+<body>
+    <div class="activation-container">
+        <h1>Activeer jouw App</h1>
+        <p id="instructions">Voer je e-mailadres in om een activeringscode aan te vragen.</p>
+
+        <!-- E-mail formulier -->
+        <form id="emailForm" class="step active">
+            <label for="email">Email</label>
+            <input type="email" id="email" name="email" placeholder="Your Email Address" maxlength="50" required>
+            <button type="button" id="submitEmail">Aanvragen</button>
+            <small id="emailHelp" class="info">Je e-mailadres wordt gebruikt voor de activatie.</small>
+        </form>
+
+        <!-- Activeringscode formulier -->
+        <form id="activationForm" class="step">
+            <label for="activationCode">Activeringscode</label>
+            <input type="text" id="activationCode" placeholder="Activation Code (e.g., XXXX-XXXX-XXXX)" maxlength="19"
+                required>
+            <button type="button" id="submitButton">Activeer</button>
+            <small class="info">De activeringscode wordt verstrekt door de app-eigenaar.</small>
+        </form>
+    </div>
+
+    <!-- JavaScript-bestand -->
+    <script src=" tijdelijk.js"></script>
+</body>
+
+</html>

@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<html>
+  <link rel="stylesheet" href="css/layout.css">
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <head>
+    <meta charset="UTF-8" />
+    <!-- https://developer.mozilla.org/en-US/docs/Web/HTTP/CSP -->
+    <meta
+      http-equiv="Content-Security-Policy"
+      content="default-src 'self'; script-src 'self'"
+    />
+    <meta
+      http-equiv="X-Content-Security-Policy"
+      content="default-src 'self'; script-src 'self'"
+    />
+    <title>SoundWork</title>
+    <link rel="icon" type="image/x-icon" href="../assets/icon.ico">
+  </head>
+  <body>
+
+    <main>
+      <div class="buttons">
+        <Div>
+          <table>
+            <tr>
+              <td>
+                <img src="../assets/icon.png" class="logos" alt="Logo" width="60px" height="60px" style="border-radius: 60px;">
+              </td>
+              <td>
+                <H1>SoundWork</H1>
+              </td>
+            </tr>
+        </table>
+      </Div>
+        <!-- <button id="audiobestand">Kies audiobestand</button>
+        <button id="openFileBtn" >Kies audiodiagram</button> -->
+        
+        <button id="audiobestand">Select audiofile</button>
+        <button id="openFileBtn" >Select audiogram</button> 
+        <select name="direction" id="direction">
+          <option value="" selected>Select ear:</option>
+          <option value="normal">Normal</option>
+          <option value="left">Left</option>
+          <option value="equal">Equal</option>
+        </select>
+        <button id="download">Download</button>
+      </div>
+      <div class="labels">
+        <strong class="p1">audiogram</strong>
+        <div class="audiodiagram">
+          <canvas id="frequencyChart" width="900" height="250"></canvas>
+        </div>
+        <strong>Audio tracks</strong>
+          <div class="container">
+            <table class="rht">
+                <td>
+                  <b>L</b>
+                </td>
+              </tr>
+                <td>
+                  <b>R</b>
+                </td> 
+              </tr>
+            </table>
+            <img id="waveformImage" style="display: none; margin-top: 20px;" alt="" />
+          </div>
+      </div>
+    </main>
+    <script src="renderer.js"></script>
+  </body>
+</html>
